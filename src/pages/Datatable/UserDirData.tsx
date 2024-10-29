@@ -53,10 +53,14 @@ export default function UserDirData() {
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
+
+  const [refid, setRefId] = useState<string>("");
+
   // Filters state
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+
   // Function to fetch customers
   const fetchCustomers = async () => {
     try {
@@ -182,6 +186,11 @@ export default function UserDirData() {
     setSelectedUserId(rowData);
     fetchUserDetails(id);
 
+    setRefId(id);
+
+    console.log("user ID ----", id);
+    
+
     setVisibleLeft(true);
   };
 
@@ -279,32 +288,10 @@ export default function UserDirData() {
           <TabView>
             <TabPanel header="User Detail">
               <p className="m-0">
-                <Fieldset
-                  legend={
-                    selectedUserId ? `${selectedUserId}` : "No user selected"
-                  }
-                >
-                  {userDetails ? (
-                    <div>
-                      <p>
-                        <strong>Name:</strong> {userDetails.refStFName}{" "}
-                        {userDetails.refStLName}
-                      </p>
-                      <p>
-                        <strong>Email:</strong> {userDetails.refCtEmail}
-                      </p>
-                      <p>
-                        <strong>DOB:</strong> {userDetails.refStDOB}
-                      </p>
-                    </div>
-                  ) : (
-                    <p>No user details available.</p>
-                  )}
-                </Fieldset>
                 {userDetails ? (
                   <>
                     <div className="mt-10">
-                      <UserProfileEdit />
+                      <UserProfileEdit refid={refid} />
                     </div>
                   </>
                 ) : (

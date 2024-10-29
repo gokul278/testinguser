@@ -39,12 +39,25 @@ interface HistoryData {
   timing: string;
 }
 
+interface ApprovalData {
+  userid: string;
+  id: string;
+  changes: string;
+  label: string;
+  olddata: string;
+  newdata: string;
+  timing: string;
+}
+
 interface UserDetails {
   id: string;
   userid: string;
   changes: string;
   olddata: string;
   newdata: string;
+  transactioncount: string;
+  changedby: string;
+  branch: string;
 }
 
 export default function Notify() {
@@ -57,6 +70,8 @@ export default function Notify() {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   const [historyData, setHistoryData] = useState<HistoryData[]>([]);
+
+  const [ApprovalData, setApprovalData] = useState<ApprovalData[]>([]);
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -75,14 +90,157 @@ export default function Notify() {
           userId: customer.refSCustId,
           fname: customer.refStFName + " " + customer.refStLName,
           lname: customer.refStLName,
-          transactioncount: customer.TransactionCount,
-          requestdate: customer.RequestDate,
-          requesttime: customer.RequestTime,
+          transactioncount: customer.unreadCount,
+          changedby: customer.groupType,
+          branch: customer.branchId,
+          requestdate: customer.refDate,
+          requesttime: customer.refTime,
         })
       );
       setCustomers(fetchedCustomers);
     } catch (error) {
       console.error("Error fetching customers:", error);
+    }
+  };
+
+  const LabelName = (label: string) => {
+    // if(label === "")
+  };
+
+  const fetchuserApprovalList = async (id: string) => {
+    console.log(id);
+
+    setApprovalData([]);
+
+    try {
+      const payload = {
+        refStId: id,
+      };
+      // console.log("payload", payload);
+
+      const response = await Axios.post(
+        import.meta.env.VITE_API_URL + `/director/userDataListApproval`,
+        payload
+      );
+
+      const fetchedCustomers: ApprovalData[] = response.data.text.data.map(
+        (ApprovalData: any) => ({
+          userid: ApprovalData.refStId,
+          id: ApprovalData.refTeId,
+          label: ApprovalData.refChanges.label,
+          olddata: ApprovalData.refChanges.data.oldValue,
+          newdata: ApprovalData.refChanges.data.newValue,
+          timing: ApprovalData.refTime,
+        })
+      );
+
+      setApprovalData(fetchedCustomers);
+
+      console.log("fecth Data ---------------------", fetchedCustomers);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const rejectbtn = (rowData: ApprovalData) => {
+    return (
+      <Button
+        label="Reject"
+        severity="secondary"
+        onClick={() => {
+          let value = [parseInt(rowData.id)];
+
+          rejectData(value, rowData.userid);
+        }}
+      />
+    );
+  };
+
+  const rejectallbtn = () => {
+    const value = ApprovalData.map((element) => element.id);
+    setVisibleLeft(false);
+
+    const id = ApprovalData[0].userid;
+
+    rejectData(value, id);
+  };
+
+  const approveallbtn = () => {
+    const value = ApprovalData.map((element) => element.id);
+    setVisibleLeft(false);
+
+    const id = ApprovalData[0].userid;
+
+    aprroveData(value, id);
+  };
+
+  const aprrovebtn = (rowData: ApprovalData) => {
+    return (
+      <Button
+        label="Approve"
+        severity="success"
+        onClick={() => {
+          let value = [parseInt(rowData.id)];
+          let id = rowData.userid;
+
+          aprroveData(value, id);
+        }}
+      />
+    );
+  };
+
+  const rejectData = async (value: any, id: any) => {
+    try {
+      const payload = {
+        userAppId: value,
+      };
+
+      console.log(value);
+
+      const response = await Axios.post(
+        import.meta.env.VITE_API_URL + `/director/userDataUpdateRejectBtn`,
+        payload
+      );
+
+      await fetchuserApprovalList(id);
+
+      if (ApprovalData.length > 1) {
+        fetchuserApprovalList(id);
+      } else {
+        setVisibleLeft(false);
+      }
+
+      fetchCustomers();
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const aprroveData = async (value: any, id: any) => {
+    try {
+      const payload = {
+        userAppId: value,
+        refStId: id,
+      };
+
+      console.log(value);
+
+      const response = await Axios.post(
+        import.meta.env.VITE_API_URL + `/director/userDataUpdateApprovalBtn`,
+        payload
+      );
+
+      await fetchuserApprovalList(id);
+
+      if (ApprovalData.length > 1) {
+        fetchuserApprovalList(id);
+      } else {
+        setVisibleLeft(false);
+      }
+
+      fetchCustomers();
+    } catch (error) {
+      console.error("Error fetching user details:", error);
     }
   };
 
@@ -98,13 +256,11 @@ export default function Notify() {
         payload
       );
 
-      console.log(response.data);
-
       const fetchedCustomers: HistoryData[] = response.data.text.data.map(
         (HistoryData: any) => ({
           userid: HistoryData.refStId,
           id: HistoryData.transId,
-          changes: HistoryData.transTypeId,
+          changes: HistoryData.transTypeText,
           olddata: JSON.parse(HistoryData.transData).oldValue,
           newdata: JSON.parse(HistoryData.transData).newValue,
           timing: HistoryData.transTime,
@@ -189,7 +345,7 @@ export default function Notify() {
   const onUserIdClick = (id: string, rowData: string) => {
     setSelectedUserId(rowData);
     fetchUserDetails(id);
-
+    fetchuserApprovalList(id);
     setVisibleLeft(true);
   };
 
@@ -294,6 +450,22 @@ export default function Notify() {
           style={{ inlineSize: "14rem" }}
         />
         <Column
+          field="changedby"
+          header="Changed By"
+          filter
+          sortable
+          style={{ inlineSize: "14rem", textTransform: "capitalize" }}
+        />
+
+        <Column
+          field="branch"
+          header="Branch"
+          filter
+          sortable
+          style={{ inlineSize: "14rem", textTransform: "capitalize" }}
+        />
+
+        <Column
           field="transactioncount"
           header="Transaction Count"
           filter
@@ -338,21 +510,34 @@ export default function Notify() {
                   severity="secondary"
                   className="h-10 p-0"
                   label="Reject All"
+                  onClick={rejectallbtn}
                 />
                 <Button
                   severity="success"
                   className="h-10 p-0"
                   label="Approve All"
+                  onClick={approveallbtn}
                 />
               </div>
             </div>
 
             <div className="card">
-              <DataTable tableStyle={{ minWidth: "50rem" }}>
-                <Column field="code" header="Code"></Column>
-                <Column field="name" header="Name"></Column>
-                <Column field="category" header="Category"></Column>
-                <Column field="quantity" header="Quantity"></Column>
+              <DataTable
+                paginator
+                rows={10}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                rowsPerPageOptions={[10, 25, 50]}
+                dataKey="id"
+                value={ApprovalData}
+                tableStyle={{ minWidth: "50rem" }}
+              >
+                <Column field="id" header="ID"></Column>
+                <Column field="label" header="Changes Column"></Column>
+                <Column field="olddata" header="Old Data"></Column>
+                <Column field="newdata" header="New Data"></Column>
+                <Column field="timing" header="Data & Time"></Column>
+                <Column field="id" body={rejectbtn} header="Reject"></Column>
+                <Column field="id" body={aprrovebtn} header="Aprrove"></Column>
               </DataTable>
             </div>
           </TabPanel>

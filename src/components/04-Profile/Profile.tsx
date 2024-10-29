@@ -177,12 +177,16 @@ const Profile: React.FC = () => {
   );
 
   useEffect(() => {
-    Axios.get(import.meta.env.VITE_API_URL + "/user/profileData", {
-      headers: {
-        Authorization: localStorage.getItem("JWTtoken"),
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
+    Axios.post(
+      import.meta.env.VITE_API_URL + "/user/profileData",
+      { refStId: null },
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((res) => {
       const data = decrypt(
         res.data[1],
         res.data[0],
@@ -737,10 +741,9 @@ const Profile: React.FC = () => {
                 height="30vh"
                 borderRadius="16px"
               ></Skeleton>
-               <div className="py-1"></div>
+              <div className="py-1"></div>
             </div>
           </div>
-
         </>
       ) : (
         <div className="bg-[#f6f5f5]">

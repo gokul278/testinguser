@@ -4,7 +4,6 @@ import "./UsersDir.css";
 import { Divider } from "primereact/divider";
 
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
-import RegisteredDataTable from "../../pages/Datatable/RegisteredDataTable";
 import UserDirData from "../../pages/Datatable/UserDirData";
 
 interface City {

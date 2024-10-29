@@ -7,8 +7,6 @@ import CheckboxInput from "../../pages/Inputs/CheckboxInput";
 import RadiobuttonInput from "../../pages/Inputs/RadiobuttonInput";
 import Axios from "axios";
 
-import { Skeleton } from "primereact/skeleton";
-
 import CryptoJS from "crypto-js";
 
 interface HealthProblemData {
@@ -29,7 +27,11 @@ interface ModeOfContact {
   [key: number]: string;
 }
 
-const UserProfileEdit: React.FC = () => {
+interface UserProfileEditProps {
+  refid: string; // Adjust the type according to your use case, it can be `number` or `string` depending on what `refid` represents
+}
+
+const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
   const decrypt = (
     encryptedData: string,
     iv: string,
@@ -136,43 +138,47 @@ const UserProfileEdit: React.FC = () => {
     profileimg: { contentType: "", content: "" },
   });
 
-  useEffect(() => {
-    Axios.get(import.meta.env.VITE_API_URL + "/validateTokenData", {
-      headers: {
-        Authorization: localStorage.getItem("JWTtoken"),
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      const data = decrypt(
-        res.data[1],
-        res.data[0],
-        import.meta.env.VITE_ENCRYPTION_KEY
-      );
+  // useEffect(() => {
+  //   Axios.get(import.meta.env.VITE_API_URL + "/validateTokenData", {
+  //     headers: {
+  //       Authorization: localStorage.getItem("JWTtoken"),
+  //       "Content-Type": "application/json",
+  //     },
+  //   }).then((res) => {
+  //     const data = decrypt(
+  //       res.data[1],
+  //       res.data[0],
+  //       import.meta.env.VITE_ENCRYPTION_KEY
+  //     );
 
-      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+  //     localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
-      setuserdata({
-        username:
-          "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
-        profileimg: data.profileFile,
-      });
+  //     setuserdata({
+  //       username:
+  //         "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
+  //       usernameid: data.data[0].refUserName,
+  //       profileimg: data.profileFile,
+  //     });
 
-      console.log("Verify Token  Running --- ");
-    });
-  }, []);
+  //     console.log("Verify Token  Running --- ");
+  //   });
+  // }, []);
 
   const [modeofcontact, setModeofContact] = useState<ModeOfContact | undefined>(
     undefined
   );
 
   useEffect(() => {
-    Axios.get(import.meta.env.VITE_API_URL + "/user/profileData", {
-      headers: {
-        Authorization: localStorage.getItem("JWTtoken"),
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
+    Axios.post(
+      import.meta.env.VITE_API_URL + "/user/profileData",
+      { refStId: parseInt(refid) },
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((res) => {
       const data = decrypt(
         res.data[1],
         res.data[0],
@@ -403,9 +409,9 @@ const UserProfileEdit: React.FC = () => {
 
   const handlesubmitaddress = () => {
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
-
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
       {
+        refStId: refid,
         address: {
           addresstype: options.address,
           refAdAdd1: inputs.peraddress,
@@ -451,9 +457,9 @@ const UserProfileEdit: React.FC = () => {
 
   const handlepersonalinfo = () => {
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
-
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
       {
+        refStId: refid,
         personalData: {
           refOccupation: inputs.occupation,
           refQualification: inputs.qualification,
@@ -479,7 +485,7 @@ const UserProfileEdit: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
 
-        console.log(data.success);
+        console.log(data);
 
         if (data.success) {
           setEdits({
@@ -496,9 +502,10 @@ const UserProfileEdit: React.FC = () => {
 
   const handlecommunicationtype = () => {
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
       {
+        refStId: refid,
         communication: {
           refCtEmail: inputs.email,
           refCtMobile: inputs.phoneno,
@@ -537,9 +544,10 @@ const UserProfileEdit: React.FC = () => {
 
   const handlegenderalhealth = () => {
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
       {
+        refStId: refid,
         generalhealth: {
           refBMI: inputs.bmi,
           refBP: inputs.bp,
@@ -592,9 +600,10 @@ const UserProfileEdit: React.FC = () => {
     });
 
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
       {
+        refStId: refid,
         presentHealth: {
           refBackpain: inputs.backpainscale,
           refDrName: inputs.caredoctorname,
@@ -643,9 +652,10 @@ const UserProfileEdit: React.FC = () => {
     });
 
     Axios.post(
-      import.meta.env.VITE_API_URL + "/user/updateProfile",
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
       {
+        refStId: refid,
         presentHealth: {
           refBackpain: inputs.backpainscale,
           refDrName: inputs.caredoctorname,
@@ -691,10 +701,10 @@ const UserProfileEdit: React.FC = () => {
 
   return (
     <>
-      <div className="bg-[#f6f5f5]">
-        <div className="py-1"></div>
+      <div className="bg-[#fff]">
+        <div className="py-1" />
 
-        <div className="userProfilePage">
+        <div className="">
           {/* Personal Information */}
           <form
             onSubmit={(e) => {
@@ -702,7 +712,7 @@ const UserProfileEdit: React.FC = () => {
               handlepersonalinfo();
             }}
           >
-            <div className="basicProfileCont m-[10px] lg:m-[30px]  p-[20px] lg:p-[40px] shadow-lg">
+            <div className="basicProfileCont p-10 shadow-lg">
               <div className="w-[100%] flex justify-between items-center mb-5">
                 <div className="text-[1.2rem] lg:text-[25px] font-bold">
                   Personal Information
@@ -744,7 +754,7 @@ const UserProfileEdit: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="w-[250px] flex flex-col justify-center items-center">
+                  {/* <div className="w-[250px] flex flex-col justify-center items-center">
                     <input
                       type="file"
                       id="file-upload"
@@ -752,8 +762,6 @@ const UserProfileEdit: React.FC = () => {
                       accept="image/png, image/jpeg" // Only accept PNG and JPG
                       onChange={handleImageChange} // Handle file change
                     />
-
-                    {/* Styled label that looks like a button */}
 
                     {loading.changeimg ? (
                       <label className="w-[250px] bg-[#f95005] hover:bg-[#e14b04] focus:outline-none border-none py-2 px-4 rounded font-normal text-white text-[1.2rem] lg:text-[18px] text-center mt-4 cursor-pointer">
@@ -790,9 +798,9 @@ const UserProfileEdit: React.FC = () => {
                         Change Image
                       </label>
                     )}
-                  </div>
+                  </div> */}
                 </div>
-                <div className="w-[100%] lg:w-[65%] flex flex-col justify-center items-center">
+                <div className="w-[100%] lg:w-[100%] flex flex-col justify-center items-center">
                   <div className="w-[100%] justify-center items-center flex flex-col">
                     <div className="w-[100%] flex justify-between mb-[20px]">
                       <div className="w-[48%]">
@@ -847,8 +855,8 @@ const UserProfileEdit: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                      <div className="w-[100%] lg:w-[48%]">
+                    <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                      <div className="w-[100%] md:w-[48%] lg:w-[48%]">
                         <SelectInput
                           id="gender"
                           name="gender"
@@ -863,7 +871,7 @@ const UserProfileEdit: React.FC = () => {
                           required
                         />
                       </div>
-                      <div className="w-[100%] lg:w-[48%]">
+                      <div className="w-[100%] md:w-[48%] lg:w-[48%]">
                         <TextInput
                           label="Father / Husband Name *"
                           name="guardianname"
@@ -916,7 +924,7 @@ const UserProfileEdit: React.FC = () => {
               handlesubmitaddress();
             }}
           >
-            <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+            <div className="basicProfileCont p-10 shadow-lg mt-10">
               <div className="w-[100%] flex justify-between items-center mb-5">
                 <div className="text-[1.2rem] lg:text-[25px] font-bold">
                   Address
@@ -946,8 +954,8 @@ const UserProfileEdit: React.FC = () => {
                   <div className="text-[1.2rem] lg:text-[25px] font-bold mb-5">
                     Permanent Address
                   </div>
-                  <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                    <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Residental Address *"
                         name="peraddress"
@@ -959,7 +967,7 @@ const UserProfileEdit: React.FC = () => {
                         required
                       />
                     </div>
-                    <div className="w-[100%] lg:w-[48%]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Pincode *"
                         name="perpincode"
@@ -1036,8 +1044,8 @@ const UserProfileEdit: React.FC = () => {
                   <div className="text-[1.2rem] lg:text-[25px] font-bold mb-5">
                     Communication Address
                   </div>
-                  <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                    <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Residental Address *"
                         name="tempaddress"
@@ -1049,7 +1057,7 @@ const UserProfileEdit: React.FC = () => {
                         required
                       />
                     </div>
-                    <div className="w-[100%] lg:w-[48%]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Pincode *"
                         name="temppincode"
@@ -1101,7 +1109,7 @@ const UserProfileEdit: React.FC = () => {
               handlecommunicationtype();
             }}
           >
-            <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+            <div className="basicProfileCont p-10 shadow-lg mt-10">
               <div className="w-[100%] flex justify-between items-center mb-5">
                 <div className="text-[1rem] lg:text-[25px] font-bold">
                   Communication Type
@@ -1141,8 +1149,8 @@ const UserProfileEdit: React.FC = () => {
                     />
                   </div>
                 </div>
-                <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                  <div className="w-[100%] lg:w-[40%]">
+                <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                  <div className="w-[100%] md:w-[40%]">
                     <TextInput
                       label="Phone Number *"
                       name="phoneno"
@@ -1154,8 +1162,8 @@ const UserProfileEdit: React.FC = () => {
                       required
                     />
                   </div>
-                  <div className="w-[100%] lg:w-[56%] flex justify-between">
-                    <div className="w-[65%] lg:w-[75%]">
+                  <div className="w-[100%] md:w-[56%] flex justify-between">
+                    <div className="w-[65%] md:w-[75%]">
                       <TextInput
                         label="Whatsapp Number *"
                         name="whatsappno"
@@ -1168,7 +1176,7 @@ const UserProfileEdit: React.FC = () => {
                       />
                     </div>
                     <div
-                      className="w-[30%] lg:w-[18%] text-[0.7rem] lg:text-[14px] flex justify-center items-center text-center bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
+                      className="w-[30%] md:w-[18%] text-[0.7rem] lg:text-[14px] flex justify-center items-center text-center bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
                       onClick={() => {
                         if (edits.communitcation) {
                           setInputs({
@@ -1217,7 +1225,7 @@ const UserProfileEdit: React.FC = () => {
               handlegenderalhealth();
             }}
           >
-            <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+            <div className="basicProfileCont p-10 shadow-lg mt-10">
               <div className="w-[100%] flex justify-between items-center mb-5">
                 <div className="text-[1.2rem] lg:text-[25px] font-bold">
                   Genderal Health
@@ -1319,8 +1327,8 @@ const UserProfileEdit: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="w-[100%] flex flex-col lg:flex-row gap-y-[25px] justify-between mb-[25px]">
-                  <div className="w-[100%] lg:w-[48%]">
+                <div className="w-[100%] flex flex-col md:flex-row gap-y-[25px] justify-between mb-[25px]">
+                  <div className="w-[100%] md:w-[48%]">
                     <label className="w-[100%] text-[#f95005] font-bold text-[1.0rem] lg:text-[20px] text-start">
                       Recent injuries / Accidents / Operations *{" "}
                     </label>
@@ -1381,7 +1389,7 @@ const UserProfileEdit: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] md:w-[48%]">
                     <label className="w-[100%] text-[#f95005] font-bold text-[1.0rem] lg:text-[20px] text-start">
                       Recent breaks / Fractures / Sprains *
                     </label>
@@ -1481,7 +1489,7 @@ const UserProfileEdit: React.FC = () => {
               handlepresenthealth();
             }}
           >
-            <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+            <div className="basicProfileCont p-10 shadow-lg mt-10">
               <div className="w-[100%] flex justify-between items-center mb-5">
                 <div className="text-[1.2rem] lg:text-[25px] font-bold">
                   Past or Present Health
@@ -1522,8 +1530,8 @@ const UserProfileEdit: React.FC = () => {
                     ))}
                   </div>
 
-                  <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                    <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Others"
                         name="pastother"
@@ -1534,7 +1542,7 @@ const UserProfileEdit: React.FC = () => {
                         readonly={!edits.present}
                       />
                     </div>
-                    <div className="w-[100%] lg:w-[48%]">
+                    <div className="w-[100%] md:w-[48%]">
                       <TextInput
                         label="Medication Details"
                         name="pastmedicaldetails"
@@ -1547,8 +1555,8 @@ const UserProfileEdit: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="w-[100%] flex flex-col gap-y-[20px] lg:flex-row justify-between">
-                    <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] flex flex-col gap-y-[20px] md:flex-row justify-between">
+                    <div className="w-[100%] md:w-[48%]">
                       <label className="w-[100%] text-[#f95005] font-bold text-[1rem] lg:text-[20px] text-start">
                         Under Physicians Care *
                       </label>
@@ -1617,7 +1625,7 @@ const UserProfileEdit: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="w-[100%] lg:w-[48%]">
+                    <div className="w-[100%] md:w-[48%]">
                       <label className="w-[100%] text-[#f95005] font-bold text-[1rem] lg:text-[20px] text-start">
                         Back Pain *
                       </label>
@@ -1684,7 +1692,7 @@ const UserProfileEdit: React.FC = () => {
           </form>
 
           {/* Therapy */}
-          <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+          <div className="basicProfileCont p-10 shadow-lg mt-10">
             <div className="w-[100%] flex justify-between items-center mb-5">
               <div className="text-[1.2rem] lg:text-[25px] font-bold">
                 Therapy
@@ -1711,8 +1719,8 @@ const UserProfileEdit: React.FC = () => {
             </div>
             <div className="w-[100%] flex justify-center items-center">
               <div className="w-[100%] justify-center items-center flex flex-col">
-                <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                  <div className="w-[100%] lg:w-[48%]">
+                <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                  <div className="w-[100%] md:w-[48%]">
                     <TextInput
                       label="Duration of the Problem"
                       name="therapydurationproblem"
@@ -1723,7 +1731,7 @@ const UserProfileEdit: React.FC = () => {
                       readonly={!edits.therapy}
                     />
                   </div>
-                  <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] md:w-[48%]">
                     <TextInput
                       label="Relevant Past History"
                       name="therapypasthistory"
@@ -1736,8 +1744,8 @@ const UserProfileEdit: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between">
-                  <div className="w-[100%] lg:w-[48%]">
+                <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between">
+                  <div className="w-[100%] md:w-[48%]">
                     <TextInput
                       label="Relevant Family History"
                       name="therapyfamilyhistory"
@@ -1748,7 +1756,7 @@ const UserProfileEdit: React.FC = () => {
                       readonly={!edits.therapy}
                     />
                   </div>
-                  <div className="w-[100%] lg:w-[48%]">
+                  <div className="w-[100%] md:w-[48%]">
                     <TextInput
                       label="Anything else"
                       name="therapyanythingelse"
