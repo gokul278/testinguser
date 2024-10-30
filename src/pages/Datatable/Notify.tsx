@@ -193,6 +193,7 @@ export default function Notify() {
     try {
       const payload = {
         userAppId: value,
+        refStId: id,
       };
 
       console.log(value);
@@ -222,8 +223,6 @@ export default function Notify() {
         userAppId: value,
         refStId: id,
       };
-
-      console.log(value);
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userDataUpdateApprovalBtn`,

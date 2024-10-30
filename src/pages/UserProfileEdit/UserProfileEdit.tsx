@@ -74,6 +74,8 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
     age: "",
     gender: "",
     guardianname: "",
+    maritalstatus: "",
+    anniversarydate: "",
     qualification: "",
     occupation: "",
     peraddress: "",
@@ -243,6 +245,8 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
         dob: personaldata.refStDOB,
         age: personaldata.refStAge,
         gender: personaldata.refStSex,
+        maritalstatus: personaldata.refMaritalStatus,
+        anniversarydate: personaldata.refWeddingDate,
         guardianname: personaldata.refguardian,
         qualification: personaldata.refQualification,
         occupation: personaldata.refOccupation,
@@ -401,6 +405,10 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
       if (name === "dob") {
         const calculatedAge = calculateAge(value);
         updatedInputs.age = calculatedAge;
+      } else if (name === "maritalstatus") {
+        if (value === "single") {
+          updatedInputs.anniversarydate = "";
+        }
       }
 
       return updatedInputs; // Return the updated inputs
@@ -469,6 +477,8 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
           refStLName: inputs.lname,
           refStSex: inputs.gender,
           refguardian: inputs.guardianname,
+          refMaritalStatus: inputs.maritalstatus,
+          refWeddingDate: inputs.anniversarydate ? inputs.anniversarydate : "",
         },
       },
       {
@@ -880,6 +890,39 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
                           onChange={handleInputVal}
                           value={inputs.guardianname}
                           readonly={!edits.personal}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-[100%] flex flex-col md:flex-row gap-y-[20px] justify-between mb-[20px]">
+                      <div className="w-[100%] md:w-[48%] lg:w-[48%]">
+                        <SelectInput
+                          id="maritalstatus"
+                          name="maritalstatus"
+                          label="Marital Status *"
+                          value={inputs.maritalstatus}
+                          onChange={handleInputVal}
+                          options={[
+                            { value: "single", label: "Single" },
+                            { value: "married", label: "Married" },
+                          ]}
+                          disabled={!edits.personal}
+                          required
+                        />
+                      </div>
+                      <div className="w-[100%] md:w-[48%] lg:w-[48%]">
+                        <TextInput
+                          label="Anniversary Date *"
+                          name="anniversarydate"
+                          id="anniversarydate"
+                          type="date"
+                          onChange={handleInputVal}
+                          disabled={
+                            inputs.maritalstatus === "married" ? false : true
+                          }
+                          readonly={!edits.personal}
+                          value={inputs.anniversarydate}
                           required
                         />
                       </div>
