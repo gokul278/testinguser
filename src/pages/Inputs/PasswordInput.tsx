@@ -10,6 +10,7 @@ interface PasswordInputProps {
   helperText?: string;
   maxLength?: number;
   disabled?: boolean;
+  required?: boolean;
 }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
@@ -19,8 +20,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   value = "",
   placeholder = "Enter your password",
   onChange,
-  maxLength = 10,
   disabled = false,
+  required = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,15 +32,16 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         type={showPassword ? "text" : "password"}
         name={name}
         placeholder={placeholder}
-        className="peer relative h-10 w-full rounded border-2 border-[#b3b4b6] px-3 pr-12 text-[#4c4c4e] placeholder-transparent outline-none transition-all autofill:bg-white invalid:border-pink-500 invalid:text-pink-500 focus:border-[#ff5001] focus:outline-none invalid:focus:border-pink-500 focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+        className="peer relative h-10 w-full rounded border-2 border-[#b3b4b6] px-3 pr-12 text-[#4c4c4e] placeholder-transparent outline-none transition-all autofill:bg-white  focus:border-[#ff5001] focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         value={value}
         onChange={onChange}
-        maxLength={maxLength}
         disabled={disabled}
+        required={required}
+        minLength={8}
       />
       <label
         htmlFor={id}
-        className="absolute left-2 -top-3 z-[1] cursor-text px-2 text-[14px] text-[#ff5001] transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:text-[14px] peer-required:after:text-pink-500 peer-required:after:content-['\00a0*'] peer-invalid:text-pink-500 peer-focus:cursor-default peer-focus:text-[14px] peer-focus:text-[#ff5001] peer-invalid:peer-focus:text-pink-500 peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent"
+        className="absolute left-2 -top-2 bg-white z-[1] cursor-text px-2 text-[14px] text-[#ff5001] transition-all before:absolute before:top-0 before:left-0 before:z-[-1] before:block before:h-full before:w-full before:bg-white before:transition-all peer-placeholder-shown:text-[14px]  peer-required:after:content-['\00a0*']  peer-focus:cursor-default peer-focus:text-[14px] peer-focus:text-[#ff5001]  peer-disabled:cursor-not-allowed peer-disabled:text-slate-400 peer-disabled:before:bg-transparent"
       >
         {label}
       </label>
@@ -48,7 +50,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         <svg
           onClick={() => setShowPassword(!showPassword)}
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute top-2 right-[10px] h-6 w-5 cursor-pointer stroke-slate-400 peer-disabled:cursor-not-allowed"
+          className="absolute top-2.5 right-[10px]  h-[20px] w-[20px] cursor-pointer stroke-slate-400 peer-disabled:cursor-not-allowed"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -71,7 +73,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         <svg
           onClick={() => setShowPassword(!showPassword)}
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute top-2 right-[10px] h-6 w-5 cursor-pointer stroke-slate-400 peer-disabled:cursor-not-allowed"
+          className="absolute top-2.5 right-[10px] h-[20px] w-[20px] cursor-pointer stroke-slate-400 peer-disabled:cursor-not-allowed"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

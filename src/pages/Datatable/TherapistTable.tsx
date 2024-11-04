@@ -258,13 +258,36 @@ export default function TherapistTable() {
     return (
       <div className="flex gap-2">
         <Button
-          label="Approve"
+          icon="pi pi-check"
+          rounded
           severity="success"
           aria-label="Approve"
           onClick={() => handleApprove(rowData)}
         />
+
+        <Button
+          icon="pi pi-times"
+          rounded
+          severity="danger"
+          aria-label="Cancel"
+          onClick={() => handleReject(rowData.id)}
+        />
       </div>
     );
+  };
+
+  const handleReject = async (id: any) => {
+    const response = await Axios.post(
+      import.meta.env.VITE_API_URL + `/staff/rejectionbtn`,
+      {
+        refStId: id,
+        comment: "Rejected By Therapist",
+      }
+    );
+
+    if (response.data.text.success) {
+      fetchCustomers();
+    }
   };
 
   const handleTherapyCheckboxChange = (e, customerId) => {

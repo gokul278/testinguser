@@ -8,7 +8,7 @@ import { Sidebar } from "primereact/sidebar";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
-import axios from "axios"; // Import axios for API calls
+import axios, { Axios } from "axios"; // Import axios for API calls
 
 interface City {
   name: string;
@@ -22,26 +22,60 @@ const StaffData: React.FC = () => {
   const [staffName, setStaffName] = useState<string>(""); // State for staff name
   const [staffRole, setStaffRole] = useState<string>(""); // State for staff role
   const [dob, setDob] = useState<Date | null>(null); // Date of birth state
-  const [dropdownValue, setDropdownValue] = useState<string>(""); // Dropdown state
+  const [dropdownValue, setDropdownValue] = useState<string>("");
+  const [dropdownValueBranch, setDropdownValueBranch] = useState<string>(""); // Dropdown state
   const [email, setEmail] = useState<string>(""); // Email state
   const [mobile, setMobile] = useState<string>(""); // Mobile state
   const [panCard, setPanCard] = useState<string>(""); // PAN card state
   const [aadharCard, setAadharCard] = useState<string>(""); // Aadhar card state
   const [userTypes, setUserTypes] = useState([]); // State to store user types from API
 
+  const [dropdownOptions, setDropdownOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
+
+  const [dropdownOptionsBranch, setDropdownOptionsBranch] = useState<
+    { label: string; value: number }[]
+  >([]);
+
+  const fetchUserTypeLabel = async () => {
+    try {
+      const response = await axios.get(
+        import.meta.env.VITE_API_URL + `/director/userTypeLabel`
+      );
+
+      console.log(response);
+
+      if (response.data.text.success) {
+        // Update state with the fetched dropdown options
+        setDropdownOptions(
+          response.data.text.userTypeLabel.map((item: any) => ({
+            label: item.refUserType,
+            value: item.refUtId,
+          }))
+        );
+
+        setDropdownOptionsBranch(
+          response.data.text.branch.map((item: any) => ({
+            label: item.refBranchName,
+            value: item.refbranchId,
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching user type labels:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserTypeLabel();
+  }, []);
+
   const cities: City[] = [
     { name: "All", code: "LDN" },
     { name: "Front Office", code: "NY" },
     { name: "Instructor", code: "RM" },
     { name: "Finance", code: "IST" },
-  ];
-
-  const dropdownOptions = [
-    { label: "Front Office", value: 4 },
-    { label: "Admin", value: 7 },
-    { label: "Finance", value: 8 },
-    { label: "Instructor", value: 10 },
-    { label: "Therapist", value: 11 },
   ];
 
   const handlePlusButtonClick = async () => {
@@ -63,7 +97,8 @@ const StaffData: React.FC = () => {
         refFName: staffName,
         refLName: staffRole,
         refDob: dob,
-        refType: dropdownValue,
+        refUserType: dropdownValue,
+        refbranchId: dropdownValueBranch,
         refEmail: email,
         refPhone: mobile,
         refPanCard: panCard,
@@ -83,6 +118,7 @@ const StaffData: React.FC = () => {
       setStaffRole("");
       setDob(null);
       setDropdownValue("");
+      setDropdownValueBranch("");
       setEmail("");
       setMobile("");
       setPanCard("");
@@ -197,10 +233,12 @@ const StaffData: React.FC = () => {
                 id="dropdown"
                 value={dropdownValue}
                 options={dropdownOptions}
+                optionLabel="label"
+                optionValue="value"
                 onChange={(e) => setDropdownValue(e.value)}
                 placeholder="Select Option"
               />
-              <label htmlFor="dropdown">Select Option</label>
+              <label htmlFor="dropdown">Select Role</label>
             </span>
           </div>
 
@@ -245,6 +283,21 @@ const StaffData: React.FC = () => {
                 onChange={(e) => setAadharCard(e.target.value)}
               />
               <label htmlFor="aadharCard">Aadhar Card</label>
+            </span>
+          </div>
+
+          <div className="field col-5">
+            <span className="p-float-label">
+              <Dropdown
+                id="dropdownbranch"
+                value={dropdownValueBranch}
+                options={dropdownOptionsBranch}
+                optionLabel="label"
+                optionValue="value"
+                onChange={(e) => setDropdownValueBranch(e.value)}
+                placeholder="Select Branch"
+              />
+              <label htmlFor="dropdown">Select Branch</label>
             </span>
           </div>
         </div>

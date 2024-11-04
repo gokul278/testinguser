@@ -11,6 +11,8 @@ import { Button } from "primereact/button";
 import { Skeleton } from "primereact/skeleton";
 
 import CryptoJS from "crypto-js";
+import PasswordInput from "../../pages/Inputs/PasswordInput";
+import ErrorMessage from "../../pages/Messages/ErrorMessage";
 
 interface HealthProblemData {
   presentHealthProblem: Record<string, string>;
@@ -22,9 +24,7 @@ interface Condition {
   checked: number;
 }
 
-interface DecryptResult {
-  [key: string]: any;
-}
+type DecryptResult = any;
 
 interface ModeOfContact {
   [key: number]: string;
@@ -36,10 +36,14 @@ const Profile: React.FC = () => {
     iv: string,
     key: string
   ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
     const decrypted = CryptoJS.AES.decrypt(
-      {
-        ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
-      },
+      cipherParams,
       CryptoJS.enc.Hex.parse(key),
       {
         iv: CryptoJS.enc.Hex.parse(iv),
@@ -122,6 +126,25 @@ const Profile: React.FC = () => {
       content: "",
     },
   });
+
+  const [passwordInputs, setPasswordInputs] = useState({
+    currentpass: "",
+    newpass: "",
+    confirmpass: "",
+  });
+
+  const handleInputPass = (event: any) => {
+    setPasswordError({
+      status: false,
+      message: "",
+    });
+    const { name, value } = event.target;
+
+    setPasswordInputs({
+      ...passwordInputs,
+      [name]: value,
+    });
+  };
 
   const [edits, setEdits] = useState({
     personal: false,
@@ -810,9 +833,15 @@ const Profile: React.FC = () => {
         if (data.success) {
           setInputs({
             ...inputs,
-            pancard: data.profileFile.panCard,
-            aadhar: data.profileFile.AadharCard,
-            certification: data.profileFile.Certification,
+            pancard: data.profileFile.employeeDocuments.panCard
+              ? data.profileFile.employeeDocuments.panCard
+              : inputs.pancard,
+            aadhar: data.profileFile.employeeDocuments.aadharCard
+              ? data.profileFile.employeeDocuments.aadharCard
+              : inputs.aadhar,
+            certification: data.profileFile.employeeDocuments.certification
+              ? data.profileFile.employeeDocuments.certification
+              : inputs.certification,
           });
         }
       })
@@ -820,6 +849,69 @@ const Profile: React.FC = () => {
         console.log("Error: ", err);
       });
   };
+
+  const handlePassword = (event: any) => {
+    event.preventDefault();
+
+    if (passwordInputs.newpass != passwordInputs.confirmpass) {
+      setPasswordError({
+        status: true,
+        message: "Confirm Password Dosen't Match",
+      });
+
+      return 0;
+    }
+
+    Axios.post(
+      import.meta.env.VITE_API_URL + "/changePassword",
+
+      {
+        oldPassword: passwordInputs.currentpass,
+        newPassword: passwordInputs.newpass,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json", // Ensure the content type is set
+        },
+      }
+    )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        console.log("Password Change-------------", data);
+
+        if (data.success) {
+          setPasswordInputs({
+            currentpass: "",
+            newpass: "",
+            confirmpass: "",
+          });
+          setPasswordError({
+            status: false,
+            message: "",
+          });
+        } else {
+          setPasswordError({
+            status: true,
+            message: "Invalid Current Password",
+          });
+        }
+      })
+      .catch((err) => {
+        // Catching any 400 status or general errors
+        console.log("Error: ", err);
+      });
+  };
+
+  const [passwordError, setPasswordError] = useState({
+    status: false,
+    message: "",
+  });
 
   return (
     <>
@@ -1104,7 +1196,13 @@ const Profile: React.FC = () => {
                       </div>
 
                       <div className="w-[100%] flex justify-between">
-                        <div className="w-[48%]">
+                        <div
+                          className={
+                            localStorage.getItem("refUtId") === "5"
+                              ? "w-[48%]"
+                              : "w-[100%]"
+                          }
+                        >
                           <TextInput
                             label="Qualification *"
                             name="qualification"
@@ -1116,18 +1214,23 @@ const Profile: React.FC = () => {
                             required
                           />
                         </div>
-                        <div className="w-[48%]">
-                          <TextInput
-                            label="Occupation *"
-                            name="occupation"
-                            id="Occupation"
-                            type="text"
-                            onChange={handleInputVal}
-                            value={inputs.occupation}
-                            readonly={!edits.personal}
-                            required
-                          />
-                        </div>
+
+                        {localStorage.getItem("refUtId") === "5" ? (
+                          <div className="w-[48%]">
+                            <TextInput
+                              label="Occupation *"
+                              name="occupation"
+                              id="Occupation"
+                              type="text"
+                              onChange={handleInputVal}
+                              value={inputs.occupation}
+                              readonly={!edits.personal}
+                              required
+                            />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -2053,7 +2156,6 @@ const Profile: React.FC = () => {
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleFileChange}
-                                required
                                 className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
                               />
                             )}
@@ -2110,7 +2212,6 @@ const Profile: React.FC = () => {
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleFileChange}
-                                required
                                 className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
                               />
                             )}
@@ -2167,7 +2268,6 @@ const Profile: React.FC = () => {
                                 type="file"
                                 accept="application/pdf"
                                 onChange={handleFileChange}
-                                required
                                 className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
                               />
                             )}
@@ -2202,6 +2302,71 @@ const Profile: React.FC = () => {
                 </div>
               </>
             )}
+
+            <form onSubmit={handlePassword}>
+              <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+                <div className="w-[100%] flex justify-between items-center mb-5">
+                  <div className="text-[1rem] lg:text-[25px] font-bold">
+                    Change Password
+                  </div>
+                </div>
+
+                <div className="w-[100%] flex justify-between items-center mb-4">
+                  <div className="w-[100%] flex justify-between">
+                    <div className="w-[100%]">
+                      <PasswordInput
+                        label="Current Password"
+                        name="currentpass"
+                        id="currentpass"
+                        onChange={handleInputPass}
+                        value={passwordInputs.currentpass}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="w-[100%] flex justify-between items-center mb-4">
+                  <div className="w-[100%] flex justify-between">
+                    <div className="w-[48%]">
+                      <PasswordInput
+                        label="New Password"
+                        name="newpass"
+                        id="newpassword"
+                        onChange={handleInputPass}
+                        value={passwordInputs.newpass}
+                        required
+                      />
+                    </div>
+                    <div className="w-[48%]">
+                      <PasswordInput
+                        label="Confirm Password"
+                        name="confirmpass"
+                        id="confimpassword"
+                        onChange={handleInputPass}
+                        value={passwordInputs.confirmpass}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {passwordError.status ? (
+                  <div className="mb-4">
+                    <ErrorMessage message={passwordError.message} />
+                  </div>
+                ) : null}
+
+                <div className="w-[100%] flex justify-start">
+                  <button
+                    className="text-[18px] outline-none py-2 border-none px-5 bg-[#f95005] font-bold cursor-pointer text-white rounded"
+                    type="submit"
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </div>
+            </form>
 
             <div className="py-1"></div>
           </div>

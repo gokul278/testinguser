@@ -3,22 +3,21 @@ import "./Notifications.css";
 
 import { Divider } from "primereact/divider";
 
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import Notify from "../../pages/Datatable/Notify";
+import { Dropdown } from "primereact/dropdown";
 
-interface City {
+interface SelectType {
   name: string;
   code: string;
 }
 
 const Notifications: React.FC = () => {
-  const [selectedCities, setSelectedCities] = useState<City | null>(null);
-  const cities: City[] = [
-    { name: "All", code: "LDN" },
-    { name: "Trial", code: "NY" },
-    { name: "Student", code: "RM" },
-    { name: "Payment Pending", code: "IST" },
+  const SelectTypeOption: SelectType[] = [
+    { name: "Student", code: "Student" },
+    { name: "Staff", code: "Staff" },
   ];
+
+  const [selectedType, setSelectedType] = useState(SelectTypeOption[0].code);
 
   return (
     <div className="usersTable">
@@ -39,17 +38,12 @@ const Notifications: React.FC = () => {
                 className="filter w-full md:w-3/12 mx-auto mt-"
                 style={{ alignItems: "start", justifyContent: "start" }}
               >
-                <MultiSelect
-                  value={selectedCities}
-                  onChange={(e: MultiSelectChangeEvent) =>
-                    setSelectedCities(e.value)
-                  }
-                  options={cities}
+                <Dropdown
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.value)}
+                  options={SelectTypeOption}
                   optionLabel="name"
-                  filter
-                  placeholder="Select Options"
-                  maxSelectedLabels={3}
-                  className="w-16rem mt-2"
+                  optionValue="code"
                 />
               </div>
 
@@ -64,7 +58,7 @@ const Notifications: React.FC = () => {
           </div>
           <Divider />
 
-          <Notify />
+          <Notify selectedType={selectedType} />
         </div>
       </div>
     </div>

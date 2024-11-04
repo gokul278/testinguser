@@ -8,7 +8,6 @@ import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 
 import { TabView, TabPanel } from "primereact/tabview";
-import { Fieldset } from "primereact/fieldset";
 
 import Axios from "axios";
 
@@ -60,7 +59,7 @@ interface UserDetails {
   branch: string;
 }
 
-export default function Notify() {
+export default function Notify(selectedType: any) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
@@ -80,9 +79,17 @@ export default function Notify() {
   // Function to fetch customers
   const fetchCustomers = async () => {
     try {
-      const response = await Axios.get(
-        import.meta.env.VITE_API_URL + `/director/userAuditList`
-      );
+      let url = "/director/userAuditList";
+
+      if (selectedType.selectedType === "Staff") {
+        url = "/director/staffAuditList";
+      }
+
+      setCustomers([]);
+
+      console.log(url);
+
+      const response = await Axios.get(import.meta.env.VITE_API_URL + url);
       console.log("response", response);
       const fetchedCustomers: Customer[] = response.data.text.data.map(
         (customer: any) => ({
@@ -103,8 +110,45 @@ export default function Notify() {
     }
   };
 
-  const LabelName = (label: string) => {
-    // if(label === "")
+  const readDocument = (rowData: ApprovalData) => {
+    if (rowData.newdata.content) {
+      return (
+        <>
+          <Button
+            type="button"
+            severity="success"
+            onClick={() => {
+              // Assuming `content` is your base64 string for the PDF file
+              const content = rowData.newdata.content;
+              const filename = rowData.label + ".pdf";
+
+              // Decode base64 to binary and create a Blob
+              const byteCharacters = atob(content);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], {
+                type: "application/pdf",
+              });
+
+              // Create a download link and trigger it
+              const link = document.createElement("a");
+              link.href = URL.createObjectURL(blob);
+              link.download = filename;
+              link.click();
+
+              // Release memory
+              URL.revokeObjectURL(link.href);
+            }}
+            label="Download"
+          />
+        </>
+      );
+    } else {
+      return <p>{rowData.newdata}</p>;
+    }
   };
 
   const fetchuserApprovalList = async (id: string) => {
@@ -256,19 +300,22 @@ export default function Notify() {
       );
 
       const fetchedCustomers: HistoryData[] = response.data.text.data.map(
-        (HistoryData: any) => ({
-          userid: HistoryData.refStId,
-          id: HistoryData.transId,
-          changes: HistoryData.transTypeText,
-          olddata: JSON.parse(HistoryData.transData).oldValue,
-          newdata: JSON.parse(HistoryData.transData).newValue,
-          timing: HistoryData.transTime,
-        })
+        (HistoryData: any) => {
+          const transData = JSON.parse(HistoryData.transData);
+          return {
+            userid: HistoryData.refStId,
+            id: HistoryData.transId,
+            changes: HistoryData.transTypeText,
+            olddata: transData.data.oldValue,
+            newdata: transData.data.newValue,
+            timing: HistoryData.transTime,
+          };
+        }
       );
 
       setHistoryData(fetchedCustomers);
 
-      console.log("History Data ---------------------", historyData);
+      console.log("History Data ---------------------", response);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -276,7 +323,7 @@ export default function Notify() {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [selectedType]);
 
   const exportExcel = () => {
     import("xlsx").then((xlsx) => {
@@ -533,7 +580,11 @@ export default function Notify() {
                 <Column field="id" header="ID"></Column>
                 <Column field="label" header="Changes Column"></Column>
                 <Column field="olddata" header="Old Data"></Column>
-                <Column field="newdata" header="New Data"></Column>
+                <Column
+                  field="id"
+                  body={readDocument}
+                  header="New Data"
+                ></Column>
                 <Column field="timing" header="Data & Time"></Column>
                 <Column field="id" body={rejectbtn} header="Reject"></Column>
                 <Column field="id" body={aprrovebtn} header="Aprrove"></Column>
