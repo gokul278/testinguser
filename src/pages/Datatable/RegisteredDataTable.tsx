@@ -52,7 +52,37 @@ const statusMapping: Record<number, string> = {
   9: "Rejected",
 };
 
+import CryptoJS from "crypto-js";
+
+type DecryptResult = any;
+
 export default function RegisteredDataTable() {
+  const decrypt = (
+    encryptedData: string,
+    iv: string,
+    key: string
+  ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
+    const decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decryptedString);
+  };
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
@@ -100,25 +130,36 @@ export default function RegisteredDataTable() {
   const fetchCustomers = async () => {
     try {
       const response = await Axios.get(
-        import.meta.env.VITE_API_URL + `/staff/studentApproval`
+        import.meta.env.VITE_API_URL + `/staff/studentApproval`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
-      const fetchedCustomers: Customer[] = response.data.text.data.map(
-        (customer: any) => ({
-          id: customer.refStId,
-          userId: customer.refSCustId,
-          fname: customer.refStFName + " " + customer.refStLName,
-          lname: customer.refStLName,
-          email: customer.refCtEmail || "",
-          date: customer.transTime || "",
-          therapist: customer.reftherapist ? "Yes" : "No",
-          mobile: customer.refCtMobile,
-          comments: "",
-          commentEnabled: false,
-          refUtId: customer.refUtId,
-          currentStatus: statusMapping[customer.refUtId],
-          nextStatus: getNextStatus(customer.refUtId),
-        })
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
       );
+
+      const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
+        id: customer.refStId,
+        userId: customer.refSCustId,
+        fname: customer.refStFName + " " + customer.refStLName,
+        lname: customer.refStLName,
+        email: customer.refCtEmail || "",
+        date: customer.transTime || "",
+        therapist: customer.reftherapist ? "Yes" : "No",
+        mobile: customer.refCtMobile,
+        comments: "",
+        commentEnabled: false,
+        refUtId: customer.refUtId,
+        currentStatus: statusMapping[customer.refUtId],
+        nextStatus: getNextStatus(customer.refUtId),
+      }));
       setCustomers(fetchedCustomers);
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -224,10 +265,24 @@ export default function RegisteredDataTable() {
           refStId: customer.id,
           currentStatus: mappedStatus ? Number(mappedStatus) : undefined,
           nextStatus: nextStatus ? Number(nextStatus) : undefined,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      if (response.data.text.success) {
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      if (data.success) {
         const updatedCustomers = customers.map((c) =>
           c.id === customer.id
             ? {
@@ -239,7 +294,7 @@ export default function RegisteredDataTable() {
         );
 
         setCustomers(updatedCustomers);
-        console.log("Approved:", customer, "Response:", response.data);
+        console.log("Approved:", customer, "Response:", data);
         fetchCustomers();
       }
     } catch (error) {
@@ -278,11 +333,25 @@ export default function RegisteredDataTable() {
           {
             refStId: customer.id,
             comment: customer.comments,
+          },
+          {
+            headers: {
+              Authorization: localStorage.getItem("JWTtoken"),
+              "Content-Type": "application/json",
+            },
           }
         );
 
-        if (response.data.text.success) {
-          console.log(`Rejection saved for ${customerId}:`, response.data);
+        const data = decrypt(
+          response.data[1],
+          response.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+        if (data.success) {
+          console.log(`Rejection saved for ${customerId}:`, data.data);
           fetchCustomers();
         }
       } catch (error) {
@@ -300,13 +369,25 @@ export default function RegisteredDataTable() {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userData`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      console.log("API response:", response.data);
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
 
-      const userData = response.data.userTransaction;
-      const userDetails = response.data.UserData[0];
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      const userData = data.data.userTransaction;
+      const userDetails = data.data.UserData[0];
 
       console.log("userDetails", userDetails);
       setUserDetails(userDetails);

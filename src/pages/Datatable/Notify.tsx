@@ -6,12 +6,14 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
+import CryptoJS from "crypto-js";
 
 import { TabView, TabPanel } from "primereact/tabview";
 
 import Axios from "axios";
 
 import { FilterMatchMode } from "primereact/api";
+import { Skeleton } from "primereact/skeleton";
 
 interface Customer {
   id: string;
@@ -59,7 +61,35 @@ interface UserDetails {
   branch: string;
 }
 
+type DecryptResult = any;
+
 export default function Notify(selectedType: any) {
+  const decrypt = (
+    encryptedData: string,
+    iv: string,
+    key: string
+  ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
+    const decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decryptedString);
+  };
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
@@ -89,21 +119,33 @@ export default function Notify(selectedType: any) {
 
       console.log(url);
 
-      const response = await Axios.get(import.meta.env.VITE_API_URL + url);
-      console.log("response", response);
-      const fetchedCustomers: Customer[] = response.data.text.data.map(
-        (customer: any) => ({
-          id: customer.refStId,
-          userId: customer.refSCustId,
-          fname: customer.refStFName + " " + customer.refStLName,
-          lname: customer.refStLName,
-          transactioncount: customer.unreadCount,
-          changedby: customer.groupType,
-          branch: customer.branchId,
-          requestdate: customer.refDate,
-          requesttime: customer.refTime,
-        })
+      const response = await Axios.get(import.meta.env.VITE_API_URL + url, {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
       );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      console.log("response", response);
+      const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
+        id: customer.refStId,
+        userId: customer.refSCustId,
+        fname: customer.refStFName + " " + customer.refStLName,
+        lname: customer.refStLName,
+        transactioncount: customer.unreadCount,
+        changedby: customer.groupType,
+        branch: customer.branchId,
+        requestdate: customer.refDate,
+        requesttime: customer.refTime,
+      }));
       setCustomers(fetchedCustomers);
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -164,10 +206,25 @@ export default function Notify(selectedType: any) {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userDataListApproval`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      const fetchedCustomers: ApprovalData[] = response.data.text.data.map(
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+      console.log("zdhd", data);
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      const fetchedCustomers: ApprovalData[] = data.data.map(
         (ApprovalData: any) => ({
           userid: ApprovalData.refStId,
           id: ApprovalData.refTeId,
@@ -179,8 +236,6 @@ export default function Notify(selectedType: any) {
       );
 
       setApprovalData(fetchedCustomers);
-
-      console.log("fecth Data ---------------------", fetchedCustomers);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -244,8 +299,22 @@ export default function Notify(selectedType: any) {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userDataUpdateRejectBtn`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
       await fetchuserApprovalList(id);
 
@@ -270,8 +339,22 @@ export default function Notify(selectedType: any) {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userDataUpdateApprovalBtn`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
       await fetchuserApprovalList(id);
 
@@ -296,10 +379,24 @@ export default function Notify(selectedType: any) {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userUpdateAuditList`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      const fetchedCustomers: HistoryData[] = response.data.text.data.map(
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      const fetchedCustomers: HistoryData[] = data.data.map(
         (HistoryData: any) => {
           const transData = JSON.parse(HistoryData.transData);
           return {
@@ -434,8 +531,22 @@ export default function Notify(selectedType: any) {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userUpdateAuditListRead`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
       if (historyData[0].userid) {
         fetchUserDetails(historyData[0].userid);

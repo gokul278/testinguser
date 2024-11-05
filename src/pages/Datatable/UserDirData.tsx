@@ -8,7 +8,7 @@ import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 
 import { TabView, TabPanel } from "primereact/tabview";
-import { Fieldset } from "primereact/fieldset";
+import CryptoJS from "crypto-js";
 
 import Axios from "axios";
 
@@ -44,6 +44,8 @@ interface UserDetails {
   rating: number;
 }
 
+type DecryptResult = any;
+
 export default function UserDirData() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
@@ -53,6 +55,31 @@ export default function UserDirData() {
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
+  const decrypt = (
+    encryptedData: string,
+    iv: string,
+    key: string
+  ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
+    const decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decryptedString);
+  };
 
   const [refid, setRefId] = useState<string>("");
 
@@ -65,23 +92,38 @@ export default function UserDirData() {
   const fetchCustomers = async () => {
     try {
       const response = await Axios.get(
-        import.meta.env.VITE_API_URL + `/staff/userManagementPage`
+        import.meta.env.VITE_API_URL + `/staff/userManagementPage`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
       console.log("response", response);
-      const fetchedCustomers: Customer[] = response.data.text.data.map(
-        (customer: any) => ({
-          id: customer.refStId,
-          userId: customer.refSCustId,
-          fname: customer.refStFName + " " + customer.refStLName,
-          lname: customer.refStLName,
-          email: customer.refCtEmail || "",
-          trial: customer.refUtIdLabel || "Trial",
-          date: customer.transTime || "",
-          mobile: customer.refCtMobile,
-          comments: "",
-          commentEnabled: false, // Default value for commentEnabled
-        })
+
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
       );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      console.log(data.data);
+
+      const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
+        id: customer.refStId,
+        userId: customer.refSCustId,
+        fname: customer.refStFName + " " + customer.refStLName,
+        lname: customer.refStLName,
+        email: customer.refCtEmail || "",
+        trial: customer.refUtIdLabel || "Trial",
+        date: customer.transTime || "",
+        mobile: customer.refCtMobile,
+        comments: "",
+        commentEnabled: false, // Default value for commentEnabled
+      }));
       setCustomers(fetchedCustomers);
     } catch (error) {
       console.error("Error fetching customers:", error);
@@ -97,18 +139,28 @@ export default function UserDirData() {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userData`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      console.log("API response:", response.data); // Log the entire response
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
 
-      const userData = response.data.userTransaction;
-      const userDetails = response.data.UserData[0];
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+      
 
-      console.log("userDetails", userDetails); // Log the userDetails
+      const userData = data.data.userTransaction;
+      const userDetails = data.data.UserData[0];
+
       setUserDetails(userDetails);
-
-      console.log("userData", userData);
       setUserDetailss(userData);
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -189,7 +241,6 @@ export default function UserDirData() {
     setRefId(id);
 
     console.log("user ID ----", id);
-    
 
     setVisibleLeft(true);
   };

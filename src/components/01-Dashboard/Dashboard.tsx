@@ -16,8 +16,6 @@ const Dashboard = () => {
     console.log("sfhbsdhf");
 
     navigate("/");
-  } else {
-    console.log("No token found in URL");
   }
 
   return <div>Dashboard</div>;

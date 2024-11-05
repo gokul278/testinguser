@@ -420,6 +420,8 @@ const Profile: React.FC = () => {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
       console.log(data);
 
       setInputs({
@@ -527,6 +529,8 @@ const Profile: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
 
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
         console.log(data.success);
 
         if (data.success) {
@@ -576,6 +580,8 @@ const Profile: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
 
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
         console.log(data.success);
 
         if (data.success) {
@@ -616,6 +622,8 @@ const Profile: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
         console.log(data.success);
 
@@ -664,6 +672,8 @@ const Profile: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
         console.log(data.success);
 
@@ -715,6 +725,8 @@ const Profile: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
         console.log(data.success);
 
@@ -770,6 +782,8 @@ const Profile: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
         console.log(data.success);
 
@@ -828,6 +842,8 @@ const Profile: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
 
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
         console.log(data);
 
         if (data.success) {
@@ -882,6 +898,8 @@ const Profile: React.FC = () => {
           res.data[0],
           import.meta.env.VITE_ENCRYPTION_KEY
         );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
         console.log("Password Change-------------", data);
 
@@ -2297,8 +2315,52 @@ const Profile: React.FC = () => {
                     <div className="text-[1rem] lg:text-[25px] font-bold">
                       Professtional Exprience
                     </div>
+                    {edits.therapy ? (
+                      <div
+                        className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
+                        onClick={handletherapy}
+                      >
+                        Save&nbsp;&nbsp;
+                        <i className="text-[15px] pi pi-check"></i>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => {
+                          editform("therapy");
+                        }}
+                        className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
+                      >
+                        Edit&nbsp;&nbsp;
+                        <i className="text-[15px] pi pi-pen-to-square"></i>
+                      </div>
+                    )}
                   </div>
-                  <div className="w-[100%] flex flex-col justify-center items-center"></div>
+                  <div className="w-[100%] flex flex-col justify-center items-center">
+                    <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
+                      <div className="w-[100%] lg:w-[48%]">
+                        <TextInput
+                          label="Year of Exprience"
+                          name="yearexprience"
+                          id="yearexprience"
+                          type="number"
+                          // onChange={handleInputVal}
+                          // value={inputs.therapydurationproblem}
+                          // readonly={!edits.therapy}
+                        />
+                      </div>
+                      <div className="w-[100%] lg:w-[48%]">
+                        <TextInput
+                          label="Specialization"
+                          name="specialization"
+                          id="specialization"
+                          type="text"
+                          // onChange={handleInputVal}
+                          // value={inputs.therapypasthistory}
+                          // readonly={!edits.therapy}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </>
             )}

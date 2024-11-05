@@ -37,10 +37,14 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
     iv: string,
     key: string
   ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
     const decrypted = CryptoJS.AES.decrypt(
-      {
-        ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
-      },
+      cipherParams,
       CryptoJS.enc.Hex.parse(key),
       {
         iv: CryptoJS.enc.Hex.parse(iv),
@@ -53,7 +57,6 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
 
     return JSON.parse(decryptedString);
   };
-
   const [conditions, setConditions] = useState<Condition[]>([]);
 
   const handleCheckboxChange = (index: any) => {

@@ -10,6 +10,7 @@ import Axios from "axios";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Fieldset } from "primereact/fieldset";
 import { Sidebar } from "primereact/sidebar";
+import CryptoJS from "crypto-js";
 
 import { FilterMatchMode } from "primereact/api"; // Import FilterMatchMode for global filtering
 
@@ -19,12 +20,9 @@ interface Customer {
   fname: string;
   lname: string;
   email: string;
+  trial: string;
   date: string;
   mobile: string;
-  refStDOB: string;
-  refStFName: string;
-  refCtEmail: string;
-  refStLName: string;
   comments?: string;
   commentEnabled?: boolean;
 }
@@ -42,7 +40,35 @@ interface UserDetails {
   rating: number;
 }
 
+type DecryptResult = any;
+
 export default function StaffDatas() {
+  const decrypt = (
+    encryptedData: string,
+    iv: string,
+    key: string
+  ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
+    const decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decryptedString);
+  };
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
@@ -60,23 +86,37 @@ export default function StaffDatas() {
   const fetchCustomers = async () => {
     try {
       const response = await Axios.get(
-        import.meta.env.VITE_API_URL + `/director/staff`
+        import.meta.env.VITE_API_URL + `/director/staff`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      const fetchedCustomers: Customer[] = (
-        response.data.text.data as unknown[]
-      ).map((customer: any) => ({
-        id: customer.refStId,
-        userId: customer.refSCustId,
-        fname: customer.refStFName + " " + customer.refStLName,
-        lname: customer.refStLName,
-        email: customer.refCtEmail || "",
-        trial: customer.refUserTypeName || "Trial",
-        date: customer.transTime || "",
-        mobile: customer.refCtMobile,
-        comments: "",
-        commentEnabled: false,
-      }));
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      const fetchedCustomers: Customer[] = (data.data as unknown[]).map(
+        (customer: any) => ({
+          id: customer.refStId,
+          userId: customer.refSCustId,
+          fname: customer.refStFName + " " + customer.refStLName,
+          lname: customer.refStLName,
+          email: customer.refCtEmail || "",
+          trial: customer.refUserTypeName || "Trial",
+          date: customer.transTime || "",
+          mobile: customer.refCtMobile,
+          comments: "",
+          commentEnabled: false,
+        })
+      );
 
       setCustomers(fetchedCustomers);
     } catch (error) {
@@ -160,13 +200,27 @@ export default function StaffDatas() {
 
       const response = await Axios.post(
         import.meta.env.VITE_API_URL + `/director/userData`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      console.log("API response:", response.data);
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
 
-      const userData = response.data.userTransaction;
-      const userDetails = response.data.UserData[0];
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      console.log("New ---------------", data);
+
+      const userData = data.data.userTransaction;
+      const userDetails = data.data.UserData[0];
 
       console.log("userDetails", userDetails);
       setUserDetails(userDetails);

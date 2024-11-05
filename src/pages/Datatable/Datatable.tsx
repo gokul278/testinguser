@@ -7,6 +7,7 @@ import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
+import CryptoJS from "crypto-js";
 
 import Axios from "axios";
 import { FilterMatchMode } from "primereact/api";
@@ -29,7 +30,35 @@ interface Option {
   value: string | unknown;
 }
 
+type DecryptResult = any;
+
 export default function Datatables() {
+  const decrypt = (
+    encryptedData: string,
+    iv: string,
+    key: string
+  ): DecryptResult => {
+    // Create CipherParams with ciphertext
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Hex.parse(encryptedData),
+    });
+
+    // Perform decryption
+    const decrypted = CryptoJS.AES.decrypt(
+      cipherParams,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    );
+
+    const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decryptedString);
+  };
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [displayStatusDialog, setDisplayStatusDialog] = useState(false);
@@ -49,52 +78,58 @@ export default function Datatables() {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      try {
-        const response = await Axios.get(
-          import.meta.env.VITE_API_URL + `/staff/userSignedUp`
-        );
-        console.log("response", response);
+      const response = await Axios.get(
+        import.meta.env.VITE_API_URL + `/staff/userSignedUp`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("JWTtoken"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-        const statusLabels = response.data.text.label.refStatusLabel;
-        const statusOptionsFormatted = Object.entries(statusLabels).map(
-          ([key, value]) => ({
-            label: value,
-            value: key,
-          })
-        );
-        console.log("statusOptionsFormatted", statusOptionsFormatted);
+      const data = decrypt(
+        response.data[1],
+        response.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
 
-        setStatusOptions(statusOptionsFormatted);
-        // Extract follow-up options
-        const followUpLabels = response.data.text.label.refFollowUpLabel;
-        const followUpOptionsFormatted = Object.entries(followUpLabels).map(
-          ([key, value]) => ({
-            label: value,
-            value: key,
-          })
-        );
-        console.log("followUpOptionsFormatted", followUpOptionsFormatted);
-        setFollowUpOptions(followUpOptionsFormatted);
+      console.log("Data", data);
 
-        console.log("response line 72", response);
-        const fetchedCustomers: Customer[] = response.data.text.data.map(
-          (customer: any) => ({
-            id: customer.refStId,
-            userId: customer.refSCustId,
-            fname: customer.refStFName + " " + customer.refStLName,
-            lname: customer.refStLName,
-            email: customer.refguardian || "",
-            date: customer.transTime || "",
-            mobile: customer.refCtMobile,
-            status1: customer.resStatusId || "Call not attended",
-            status2: customer.refFollowUpId || "Follow Up 1",
-            comments: customer.refSUpdatedBy || null,
-          })
-        );
-        setCustomers(fetchedCustomers);
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+      const statusLabels = data.label.refStatusLabel;
+      const statusOptionsFormatted = Object.entries(statusLabels).map(
+        ([key, value]) => ({
+          label: value,
+          value: key,
+        })
+      );
+
+      setStatusOptions(statusOptionsFormatted);
+      // Extract follow-up options
+      const followUpLabels = data.label.refFollowUpLabel;
+      const followUpOptionsFormatted = Object.entries(followUpLabels).map(
+        ([key, value]) => ({
+          label: value,
+          value: key,
+        })
+      );
+      setFollowUpOptions(followUpOptionsFormatted);
+
+      const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
+        id: customer.refStId,
+        userId: customer.refSCustId,
+        fname: customer.refStFName + " " + customer.refStLName,
+        lname: customer.refStLName,
+        email: customer.refguardian || "",
+        date: customer.transTime || "",
+        mobile: customer.refCtMobile,
+        status1: customer.resStatusId || "Call not attended",
+        status2: customer.refFollowUpId || "Follow Up 1",
+        comments: customer.refSUpdatedBy || null,
+      }));
+      setCustomers(fetchedCustomers);
     };
 
     fetchCustomers();
@@ -232,10 +267,25 @@ export default function Datatables() {
 
           const response = await Axios.post(
             import.meta.env.VITE_API_URL + `/staff/userFollowUp`,
-            payload
+            payload,
+            {
+              headers: {
+                Authorization: localStorage.getItem("JWTtoken"),
+                "Content-Type": "application/json",
+              },
+            }
           );
 
-          console.log("API response:", response);
+          const data = decrypt(
+            response.data[1],
+            response.data[0],
+            import.meta.env.VITE_ENCRYPTION_KEY
+          );
+
+          console.log("------->", data);
+
+          localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
           if (response.status === 200) {
             console.log(`Follow-up updated for Customer ID: ${customerId}`);
           }
