@@ -27,6 +27,8 @@ import Therapist from "./components/36-Therapist/Therapist";
 import Dashboard from "./components/01-Dashboard/Dashboard";
 import Notifications from "./components/37-Notifications/Notifications";
 import { Logout } from "./pages/Logout/Logout";
+import Settings from "./components/08-Settings/Settings";
+import PrintPDF from "./pages/PrintPDF/PrintPDF";
 
 const App = () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -57,6 +59,10 @@ const App = () => {
           <Route path="/support" element={<Support />} />
           <Route path="/logout" element={<Logout />} />
 
+          <Route path="/print" element={<PrintPDF />} />
+
+          <Route path="/settings" element={<Settings />} />
+
           {/* USER DASHBOARD */}
           <Route path="/users/dashboard" element={<Dashboard />} />
 
@@ -71,7 +77,7 @@ const App = () => {
           <Route path="/staff/registeredUsers" element={<RegisteredUsers />} />
           <Route path="/feedback" element={<Feedback />} />
 
-          <Route path="/transaction" element={<Transactions />} />
+          <Route path="/staff/transaction" element={<Transactions />} />
           <Route path="/payroll" element={<Payroll />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/reports" element={<Reports />} />

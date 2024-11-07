@@ -13,7 +13,6 @@ import { TabView, TabPanel } from "primereact/tabview";
 import Axios from "axios";
 
 import { FilterMatchMode } from "primereact/api";
-import { Skeleton } from "primereact/skeleton";
 
 interface Customer {
   id: string;

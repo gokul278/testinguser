@@ -231,15 +231,16 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       icon: <AiOutlineBell />,
     },
     {
-      path: "/staff/feedback",
-      name: "Feedback",
-      icon: <BiMessage />,
-    },
-    {
       path: "/staff/transaction",
       name: "Transactions",
       icon: <IoIosSwap />,
     },
+    {
+      path: "/staff/feedback",
+      name: "Feedback",
+      icon: <BiMessage />,
+    },
+
     {
       path: "/staff/payroll",
       name: "Payroll",
@@ -263,6 +264,7 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       icon: <SlOrganization />,
     },
     { path: "/users/profile", name: "Profile", icon: <CiUser /> },
+    { path: "/settings", name: "Settings", icon: <IoSettingsOutline /> },
     {
       path: "/users/support",
       name: "Support",
