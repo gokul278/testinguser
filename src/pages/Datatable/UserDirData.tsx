@@ -155,7 +155,6 @@ export default function UserDirData() {
       );
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
-      
 
       const userData = data.data.userTransaction;
       const userDetails = data.data.UserData[0];
@@ -257,6 +256,27 @@ export default function UserDirData() {
   };
 
   const header = renderHeader();
+
+  const actionBody = (rowData: any) => {
+    console.log(rowData);
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(rowData.transData);
+
+      return (
+        <>
+          Label: {parsedData.label}
+          <br /><br />
+          Old Data: {parsedData.data.oldValue ? parsedData.data.oldValue : "null"} <br /><br />
+          New Data: {parsedData.data.newValue}
+        </>
+      );
+    } catch (error) {
+      // If parsing fails, transData is not valid JSON
+      return <>{rowData.transData}</>;
+    }
+  };
 
   return (
     <div className="card" style={{ overflow: "auto" }}>
@@ -363,6 +383,7 @@ export default function UserDirData() {
                   <Column
                     field="transData"
                     header="Action"
+                    body={actionBody}
                     style={{ textTransform: "capitalize" }}
                   ></Column>
                   <Column

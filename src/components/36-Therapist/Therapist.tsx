@@ -64,12 +64,15 @@ const Therapist: React.FC = () => {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
+      console.log(data);
+      
+
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
+        usernameid: data.data[0].refusertype,
         profileimg: data.profileFile,
       });
 
@@ -152,7 +155,7 @@ const Therapist: React.FC = () => {
           </div>
           <div className="routesCont">
             <div className="routeContents">
-              <div className="filterHeaders">
+              {/* <div className="filterHeaders">
                 <div className="card filterContents w-full md:w-12/12 mx-auto">
                   <div
                     className="filter w-full md:w-3/12 mx-auto"
@@ -180,7 +183,7 @@ const Therapist: React.FC = () => {
                     <p className="pr-5">Apply Filter</p>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <Divider />
 
               <TherapistTable />

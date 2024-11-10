@@ -131,7 +131,7 @@ const Offers: React.FC = () => {
 
           setWorkSpaceData({
             refOfferId: rowData.refOfId,
-            description: rowData.refOfferDiscription,
+            description: rowData.refDescription,
             minimumval: rowData.refMin,
             offers: rowData.refOffer,
             startingDate: rowData.refStartAt,
@@ -210,6 +210,7 @@ const Offers: React.FC = () => {
           refOfId: workSpaceData.refOfferId,
           refMin: workSpaceData.minimumval,
           refOffer: workSpaceData.offers,
+
           refStartAt: formatDateToYYYYMMDD(workSpaceData.startingDate),
           refEndAt: formatDateToYYYYMMDD(workSpaceData.endingDate),
         },
@@ -256,6 +257,7 @@ const Offers: React.FC = () => {
           refOfferId: branch,
           refMin: workSpaceData.minimumval,
           refOffer: workSpaceData.offers,
+          refDescription: workSpaceData.description,
           refStartAt: formatDateToYYYYMMDD(workSpaceData.startingDate),
           refEndAt: formatDateToYYYYMMDD(workSpaceData.endingDate),
         },
@@ -311,6 +313,33 @@ const Offers: React.FC = () => {
           <div className="text-yellow-600 font-bold">Yet to Start</div>
         )}
       </>
+    );
+  };
+
+  const couponBody = (rowData: any) => {
+    return (
+      <div
+        style={{
+          // border: "1px dotted green",
+          // padding: "5px",
+          // borderRadius: "5px",
+          cursor: "pointer",
+          // fontWeight: "700",
+          // color: "green",
+        }}
+        onClick={() => {
+          navigator.clipboard
+            .writeText(rowData.refCoupon)
+            .then(() => {
+              alert(`Copied: ${rowData.refCoupon}`);
+            })
+            .catch((err) => {
+              console.error("Failed to copy text:", err);
+            });
+        }}
+      >
+        {rowData.refCoupon}
+      </div>
     );
   };
 
@@ -459,7 +488,7 @@ const Offers: React.FC = () => {
 
       <DataTable value={tableData} className="mt-10">
         <Column field="Offer Type" header="Offer Type"></Column>
-        <Column field="refCoupon" header="Coupon"></Column>
+        <Column field="refCoupon" body={couponBody} header="Coupon"></Column>
         <Column field="refMin" header="Minimum Value"></Column>
         <Column field="refOffer" header="Discount / Offers"></Column>
         <Column

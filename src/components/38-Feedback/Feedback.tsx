@@ -1,11 +1,11 @@
 import React from "react";
 
-const Support: React.FC = () => {
+const StaffFeedback: React.FC = () => {
   return (
     <div className="flex justify-center items-center w-[100%] h-screen">
-      <h1>Support - Comming Soon</h1>
+      <h1>Feedback - Comming Soon</h1>
     </div>
   );
 };
 
-export default Support;
+export default StaffFeedback;

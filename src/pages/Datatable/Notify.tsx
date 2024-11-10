@@ -133,7 +133,7 @@ export default function Notify(selectedType: any) {
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
-      console.log("response", response);
+      console.log("response", data);
       const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
         id: customer.refStId,
         userId: customer.refSCustId,
@@ -240,20 +240,6 @@ export default function Notify(selectedType: any) {
     }
   };
 
-  const rejectbtn = (rowData: ApprovalData) => {
-    return (
-      <Button
-        label="Reject"
-        severity="secondary"
-        onClick={() => {
-          let value = [parseInt(rowData.id)];
-
-          rejectData(value, rowData.userid);
-        }}
-      />
-    );
-  };
-
   const rejectallbtn = () => {
     const value = ApprovalData.map((element) => element.id);
     setVisibleLeft(false);
@@ -272,18 +258,34 @@ export default function Notify(selectedType: any) {
     aprroveData(value, id);
   };
 
-  const aprrovebtn = (rowData: ApprovalData) => {
+  const OverallBtn = (rowData: ApprovalData) => {
     return (
-      <Button
-        label="Approve"
-        severity="success"
-        onClick={() => {
-          let value = [parseInt(rowData.id)];
-          let id = rowData.userid;
+      <div className="flex gap-2">
+        <Button
+          icon="pi pi-check"
+          rounded
+          severity="success"
+          aria-label="Approve"
+          onClick={() => {
+            let value = [parseInt(rowData.id)];
+            let id = rowData.userid;
 
-          aprroveData(value, id);
-        }}
-      />
+            aprroveData(value, id);
+          }}
+        />
+
+        <Button
+          icon="pi pi-times"
+          rounded
+          severity="danger"
+          aria-label="Cancel"
+          onClick={() => {
+            let value = [parseInt(rowData.id)];
+
+            rejectData(value, rowData.userid);
+          }}
+        />
+      </div>
     );
   };
 
@@ -663,7 +665,7 @@ export default function Notify(selectedType: any) {
             <div className="flex justify-end">
               <div className="card pb-3 flex gap-x-3 justify-content-center">
                 <Button
-                  severity="secondary"
+                  severity="danger"
                   className="h-10 p-0"
                   label="Reject All"
                   onClick={rejectallbtn}
@@ -696,8 +698,12 @@ export default function Notify(selectedType: any) {
                   header="New Data"
                 ></Column>
                 <Column field="timing" header="Data & Time"></Column>
-                <Column field="id" body={rejectbtn} header="Reject"></Column>
-                <Column field="id" body={aprrovebtn} header="Aprrove"></Column>
+                <Column
+                  field="id"
+                  body={OverallBtn}
+                  header="Approve / Reject"
+                ></Column>
+                {/* <Column field="id" body={aprrovebtn} header="Aprrove"></Column> */}
               </DataTable>
             </div>
           </TabPanel>

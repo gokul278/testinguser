@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/00-Header/Header";
 import OverallDashboard from "./components/21-OverallDashboard/OverallDashboard";
@@ -28,8 +27,7 @@ import Dashboard from "./components/01-Dashboard/Dashboard";
 import Notifications from "./components/37-Notifications/Notifications";
 import { Logout } from "./pages/Logout/Logout";
 import Settings from "./components/08-Settings/Settings";
-import PrintPDF from "./pages/PrintPDF/PrintPDF";
-
+import StaffFeedback from "./components/38-Feedback/Feedback";
 const App = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("JWTtoken");
@@ -38,8 +36,8 @@ const App = () => {
   if (token && refUtId) {
     localStorage.setItem("JWTtoken", token);
     localStorage.setItem("refUtId", refUtId);
-    const storedToken = localStorage.getItem("JWTtoken");
-    const storedRefUtId = localStorage.getItem("refUtId");
+    // const storedToken = localStorage.getItem("JWTtoken");
+    // const storedRefUtId = localStorage.getItem("refUtId");
     window.history.replaceState({}, document.title, window.location.pathname);
   } else {
     console.log("No token found in URL");
@@ -51,15 +49,13 @@ const App = () => {
         <Routes>
           {/* USER */}
           <Route path="/" element={<OverallDashboard />} />
-          <Route path="/notes" element={<UserNotes />} />
-          <Route path="/attendance" element={<Attendance />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/branch" element={<Branch />} />
+          <Route path="/users/notes" element={<UserNotes />} />
+          <Route path="/users/attendance" element={<Attendance />} />
+          <Route path="/users/payment" element={<Payment />} />
+          <Route path="/users/branch" element={<Branch />} />
           <Route path="/users/profile" element={<Profile />} />
-          <Route path="/support" element={<Support />} />
+          <Route path="users/support" element={<Support />} />
           <Route path="/logout" element={<Logout />} />
-
-          <Route path="/print" element={<PrintPDF />} />
 
           <Route path="/settings" element={<Settings />} />
 
@@ -76,9 +72,10 @@ const App = () => {
           <Route path="/therapist/approve" element={<Therapist />} />
           <Route path="/staff/registeredUsers" element={<RegisteredUsers />} />
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/staff/feedback" element={<StaffFeedback />} />
 
           <Route path="/staff/transaction" element={<Transactions />} />
-          <Route path="/payroll" element={<Payroll />} />
+          <Route path="/staff/payroll" element={<Payroll />} />
           <Route path="/staff" element={<Staff />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/blogs" element={<Blogs />} />

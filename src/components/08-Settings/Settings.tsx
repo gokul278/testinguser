@@ -66,7 +66,7 @@ const Settings: React.FC = () => {
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
+        usernameid: data.data[0].refusertype,
         profileimg: data.profileFile,
       });
 

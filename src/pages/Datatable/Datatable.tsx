@@ -300,19 +300,31 @@ export default function Datatables() {
 
   const commentsBodyTemplate = (rowData: Customer) => {
     return (
-      <div className="flex align-items-center gap-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          // if (rowData.status2.length > 0 && rowData.status1.length > 0) {
+          handleSaveComment(rowData.id);
+          // } else {
+          //   alert("Fill the Status 1 & Follow Up");
+          // }
+        }}
+        className="flex align-items-center gap-2"
+      >
         <InputText
           value={rowData.comments || ""}
           onChange={(e) => handleCommentChange(rowData.id, e.target.value)}
           className="p-inputtext-sm"
           placeholder="Enter comments"
+          required
         />
         <Button
           label="Save"
           className="p-button-primary p-button-sm"
-          onClick={() => handleSaveComment(rowData.id)}
+          type="submit"
         />
-      </div>
+      </form>
     );
   };
 

@@ -73,7 +73,7 @@ const Transactions: React.FC = () => {
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
+        usernameid: data.data[0].refusertype,
         profileimg: data.profileFile,
       });
 
@@ -219,6 +219,10 @@ const Transactions: React.FC = () => {
   const [audit, setAudit] = useState(false);
 
   const [payment, setPayment] = useState(false);
+
+  const closePayment = () => {
+    setPayment(false);
+  };
 
   const [paymentID, setPaymentID] = useState<string>("");
 
@@ -561,7 +565,7 @@ const Transactions: React.FC = () => {
         onHide={() => setPayment(false)}
       >
         <h2>Payment</h2>
-        <Payment refStId={paymentID} />
+        <Payment closePayment={closePayment} refStId={paymentID} />
       </Sidebar>
     </>
   );

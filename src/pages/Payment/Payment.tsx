@@ -6,9 +6,13 @@ import { TabPanel, TabView } from "primereact/tabview";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import CryptoJS from "crypto-js";
+import PrintPDF from "../PrintPDF/PrintPDF";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
 interface PaymentProps {
   refStId: string;
+  closePayment: () => void;
 }
 
 type DecryptResult = any;
@@ -21,21 +25,22 @@ interface PaymentInput {
   paymentfromDate: Date | null;
   paymenttoDate: Date | null;
   paymentExpireDate: Date | null;
-  paymentfees: string;
-  paymentgst: string;
-  paymenttotal: string;
+  paymentfees: any;
+  paymentgst: any;
+  paymenttotal: any;
   coupon: string;
   couponfees: string;
-  coupongst: string;
+  coupongst: any;
   coupontotal: string;
   couponexpireDate: Date | null;
   cashStatus: boolean;
   staffid: string;
   refOfferValue: string;
   refOfferType: string;
+  refOfferName: string;
 }
 
-const Payment: React.FC<PaymentProps> = ({ refStId }) => {
+const Payment: React.FC<PaymentProps> = ({ refStId, closePayment }) => {
   const decrypt = (
     encryptedData: string,
     iv: string,
@@ -62,6 +67,8 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
     return JSON.parse(decryptedString);
   };
 
+  const [constfees, setConstFees] = useState(0);
+
   const fetchData = () => {
     Axios.post(
       import.meta.env.VITE_API_URL + "/finance/studentFeesDetails",
@@ -81,9 +88,9 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
-      console.log("Pay Data -----------", data);
-
       const userData = data.data[0];
+
+      setConstFees(userData.refFees);
 
       setPaymentInput({
         ...paymentInput,
@@ -105,6 +112,7 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
 
   useEffect(() => {
     fetchData();
+    getHistory();
   }, []);
 
   const [paymentInput, setPaymentInput] = useState<PaymentInput>({
@@ -127,11 +135,21 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
     staffid: "",
     refOfferValue: "",
     refOfferType: "",
+    refOfferName: "",
   });
 
   const [couponStatus, setCouponStatus] = useState(false);
 
   const [couponError, setCouponError] = useState(false);
+
+  const formatDate = (dateString: any) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
+  const [customOffer, setCustomOffer] = useState(false);
 
   const submitCoupon = () => {
     setCouponError(false);
@@ -142,9 +160,9 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
         refToAmt: paymentInput.paymenttotal,
         refGst: paymentInput.paymentgst,
         refFees: paymentInput.paymentfees,
-        refExDate: paymentInput.paymentExpireDate,
-        refStartDate: paymentInput.paymentfromDate,
-        refEndDate: paymentInput.paymenttoDate,
+        refExDate: formatDate(paymentInput.paymentExpireDate),
+        refStartDate: formatDate(paymentInput.paymentfromDate),
+        refEndDate: formatDate(paymentInput.paymenttoDate),
       },
       {
         headers: {
@@ -164,15 +182,29 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
       if (data.success) {
         setCouponStatus(true);
 
+        const gst = fetchedData.refFees * 0.18;
+        const totalgst = gst + fetchedData.refFees;
+
         setPaymentInput({
           ...paymentInput,
           couponfees: fetchedData.refFees,
-          coupongst: fetchedData.refGst,
-          coupontotal: fetchedData.refToAmt,
+          coupongst: gst,
+          coupontotal: totalgst,
           couponexpireDate: fetchedData.refExDate,
           refOfferValue: fetchedData.refOfferValue,
           refOfferType: fetchedData.refOfferType,
+          refOfferName: fetchedData.refOfferName,
+          paymenttoDate: fetchedData.refEndDate,
         });
+
+        if (
+          fetchedData.refOfferName === "Percentage" ||
+          fetchedData.refOfferName === "Discount"
+        ) {
+          setCustomOffer(false);
+        } else {
+          setCustomOffer(true);
+        }
       } else {
         setCouponError(true);
       }
@@ -183,10 +215,13 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
     });
   };
 
+  const [downloadStatus, setDownloadStatus] = useState({
+    status: false,
+    id: "",
+  });
+
   const handlePayment = (e: any) => {
     e.preventDefault();
-
-    console.log(paymentInput.refOfferType);
 
     Axios.post(
       import.meta.env.VITE_API_URL + "/finance/FeesPaid",
@@ -195,14 +230,25 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
         refPaymentMode: "offline",
         refPaymentFrom: paymentInput.paymentfromDate,
         refPaymentTo: paymentInput.paymenttoDate,
-        refExpiry: paymentInput.couponexpireDate,
-        refToAmt: paymentInput.paymenttotal,
-        refToAmtOf: paymentInput.coupontotal,
-        refOfferValue: paymentInput.refOfferValue,
+        refExpiry: paymentInput.couponexpireDate
+          ? paymentInput.couponexpireDate
+          : paymentInput.paymentExpireDate,
+        refToAmt: paymentInput.coupontotal
+          ? paymentInput.coupontotal
+          : paymentInput.paymenttotal,
+        refFeesAmtOf: paymentInput.couponfees ? paymentInput.couponfees : 0,
+        refOfferValue: paymentInput.refOfferValue
+          ? paymentInput.refOfferValue
+          : null,
         refFeesPaid: paymentInput.paymentfees,
         refGstPaid: paymentInput.paymentgst,
-        refCoupon: paymentInput.coupon,
-        refOfferType: paymentInput.refOfferType,
+        refCoupon: paymentInput.coupon ? paymentInput.coupon : null,
+        refOfferType: paymentInput.refOfferType
+          ? paymentInput.refOfferType
+          : null,
+        refOfferName: paymentInput.refOfferName
+          ? paymentInput.refOfferName
+          : null,
       },
       {
         headers: {
@@ -217,26 +263,54 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
         import.meta.env.VITE_ENCRYPTION_KEY
       );
 
-      const fetchedData = data.data;
+      console.log(data);
 
       if (data.success) {
-        setCouponStatus(true);
-
-        setPaymentInput({
-          ...paymentInput,
-          couponfees: fetchedData.refFees,
-          coupongst: fetchedData.refGst,
-          coupontotal: fetchedData.refToAmt,
-          couponexpireDate: fetchedData.refExDate,
+        setDownloadStatus({
+          status: true,
+          id: data.data,
         });
-      } else {
-        setCouponError(true);
       }
-
-      console.log("Coupon Data -----------", data);
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
     });
+  };
+
+  const [getHistoryData, setGetHistoryData] = useState();
+
+  const getHistory = () => {
+    Axios.post(
+      import.meta.env.VITE_API_URL + "/finance/userPaymentAuditPg",
+      {
+        refStId: refStId,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((res) => {
+      const data = decrypt(
+        res.data[1],
+        res.data[0],
+        import.meta.env.VITE_ENCRYPTION_KEY
+      );
+
+      console.log(data.data);
+
+      setGetHistoryData(data.data);
+
+      localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+    });
+  };
+
+  const returnDownloadBtn = (rowData: any) => {
+    return (
+      <>
+        <PrintPDF closePayment={closePayment} refOrderId={rowData.refOrderId} />
+      </>
+    );
   };
 
   return (
@@ -276,12 +350,26 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
                   : null
               }
               onChange={(e) => {
+                const fromDate = new Date(e.value + "-01");
+                const toDate = new Date(paymentInput.paymenttoDate + "-01");
+
+                // Calculate the difference in months
+                const monthsDifference =
+                  (toDate.getFullYear() - fromDate.getFullYear()) * 12 +
+                  (toDate.getMonth() - fromDate.getMonth()) +
+                  1; // Add 1 to include both months
+
+                const fees = constfees * monthsDifference;
+                const gst = 0.18 * fees;
                 setPaymentInput({
                   ...paymentInput,
-                  paymentfromDate: e.value || null, // Ensures null if e.value is undefined or empty
+                  paymentfromDate: e.value || null,
+                  paymentfees: fees,
+                  paymentgst: gst,
+                  paymenttotal: fees + gst,
                 });
               }}
-              disabled={couponStatus}
+              disabled
             />
           </div>
           <div className="w-[32%] flex flex-col gap-[5px]">
@@ -293,19 +381,36 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
                   : null
               }
               onChange={(e) => {
+                const fromDate = new Date(paymentInput.paymentfromDate + "-01");
+                const toDate = new Date(e.value + "-01");
+
+                // Calculate the difference in months
+                const monthsDifference =
+                  (toDate.getFullYear() - fromDate.getFullYear()) * 12 +
+                  (toDate.getMonth() - fromDate.getMonth()) +
+                  1; // Add 1 to include both months
+
+                const fees = constfees * monthsDifference;
+                const gst = 0.18 * fees;
                 setPaymentInput({
                   ...paymentInput,
                   paymenttoDate: e.value || null,
                   paymentExpireDate: e.value || null,
+                  paymentfees: fees,
+                  paymentgst: gst,
+                  paymenttotal: fees + gst,
                 });
               }}
               view="month"
               dateFormat="mm/yy"
+              minDate={
+                new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+              }
               disabled={couponStatus}
             />
           </div>
           <div className="w-[32%] flex flex-col gap-[5px]">
-            <label>Expire Date</label>
+            <label>Package End On</label>
             <Calendar
               view="month"
               dateFormat="mm/yy"
@@ -378,35 +483,38 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
         ) : null}
         {couponStatus ? (
           <>
-            <div className="flex justify-between mt-3">
-              <div className="w-[32%] flex flex-col gap-[5px]">
-                <label>Fees</label>
-                <InputText value={paymentInput.couponfees} readOnly />
+            {customOffer ? (
+              <div className="flex justify-between mt-3">
+                <div className="w-[100%] flex flex-col gap-[5px]">
+                  <label>Package End On</label>
+                  <Calendar
+                    view="month"
+                    dateFormat="mm/yy"
+                    value={
+                      paymentInput.couponexpireDate
+                        ? new Date(paymentInput.couponexpireDate)
+                        : null
+                    }
+                    disabled
+                  />
+                </div>
               </div>
-              <div className="w-[32%] flex flex-col gap-[5px]">
-                <label>GST</label>
-                <InputText value={paymentInput.coupongst} readOnly />
+            ) : (
+              <div className="flex justify-between mt-3">
+                <div className="w-[32%] flex flex-col gap-[5px]">
+                  <label>Offer Fees</label>
+                  <InputText value={paymentInput.couponfees} readOnly />
+                </div>
+                <div className="w-[32%] flex flex-col gap-[5px]">
+                  <label>GST</label>
+                  <InputText value={paymentInput.coupongst} readOnly />
+                </div>
+                <div className="w-[32%] flex flex-col gap-[5px]">
+                  <label>Total Amount</label>
+                  <InputText value={paymentInput.coupontotal} readOnly />
+                </div>
               </div>
-              <div className="w-[32%] flex flex-col gap-[5px]">
-                <label>Total Amount</label>
-                <InputText value={paymentInput.coupontotal} readOnly />
-              </div>
-            </div>
-            <div className="flex justify-between mt-3">
-              <div className="w-[100%] flex flex-col gap-[5px]">
-                <label>Expire Date</label>
-                <Calendar
-                  view="month"
-                  dateFormat="mm/yy"
-                  value={
-                    paymentInput.couponexpireDate
-                      ? new Date(paymentInput.couponexpireDate)
-                      : null
-                  }
-                  disabled
-                />
-              </div>
-            </div>
+            )}
           </>
         ) : null}
 
@@ -436,11 +544,41 @@ const Payment: React.FC<PaymentProps> = ({ refStId }) => {
           </div>
 
           <div className="w-[100%] mt-5 flex justify-center">
-            <Button severity="success" type="submit" label="Pay Ammount" />
+            {downloadStatus.status ? (
+              <>
+                <PrintPDF
+                  closePayment={closePayment}
+                  refOrderId={downloadStatus.id}
+                />
+              </>
+            ) : (
+              <>
+                <Button severity="success" type="submit" label="Pay Amount" />
+              </>
+            )}
           </div>
         </form>
       </TabPanel>
-      <TabPanel header="History"></TabPanel>
+      <TabPanel header="History">
+        <DataTable
+          paginator
+          rows={10}
+          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+          rowsPerPageOptions={[10, 25, 50]}
+          dataKey="id"
+          tableStyle={{ minWidth: "50rem" }}
+          value={getHistoryData}
+        >
+          <Column field="refOrderId" header="Order ID"></Column>
+          <Column field="refDate" header="Payment Date"></Column>
+          <Column field="refExpiry" header="Expiry Date"></Column>
+          <Column
+            field="refOrderId"
+            body={returnDownloadBtn}
+            header="Download"
+          ></Column>
+        </DataTable>
+      </TabPanel>
     </TabView>
   );
 };

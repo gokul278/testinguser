@@ -154,6 +154,7 @@ const Profile: React.FC = () => {
     present: false,
     therapy: false,
     document: false,
+    prof: false,
   });
 
   const editform = (event: string) => {
@@ -195,7 +196,7 @@ const Profile: React.FC = () => {
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
+        usernameid: data.data[0].refusertype,
         profileimg: data.profileFile,
       });
 
@@ -211,6 +212,11 @@ const Profile: React.FC = () => {
   const [modeofcontact, setModeofContact] = useState<ModeOfContact | undefined>(
     undefined
   );
+
+  const [employeeData, setEmployeeData] = useState({
+    refExperence: "",
+    refSpecialization: "",
+  });
 
   useEffect(() => {
     let url = "/staff/ProfileData";
@@ -238,6 +244,11 @@ const Profile: React.FC = () => {
 
       console.log("UserData Running --- ");
       console.log(data);
+
+      setEmployeeData({
+        refExperence: data.data.EmployeeData.refExperence,
+        refSpecialization: data.data.EmployeeData.refSpecialization,
+      });
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
@@ -931,6 +942,54 @@ const Profile: React.FC = () => {
     message: "",
   });
 
+  const handleprof = () => {
+    Axios.post(
+      import.meta.env.VITE_API_URL + "/staff/ProfileData",
+
+      {
+        refExperence: employeeData.refExperence,
+        refSpecialization: employeeData.refSpecialization,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("JWTtoken"),
+          "Content-Type": "application/json", // Ensure the content type is set
+        },
+      }
+    )
+      .then((res) => {
+        const data = decrypt(
+          res.data[1],
+          res.data[0],
+          import.meta.env.VITE_ENCRYPTION_KEY
+        );
+
+        localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
+
+        if (data.success) {
+          console.log("Prof---------", data);
+
+          setEdits({
+            ...edits,
+            prof: false,
+          });
+
+          setEmployeeData({
+            refExperence: data.data.EmployeeData.refExperence
+              ? data.data.EmployeeData.refExperence
+              : "",
+            refSpecialization: data.data.EmployeeData.refSpecialization
+              ? data.data.EmployeeData.refSpecialization
+              : "",
+          });
+        }
+      })
+      .catch((err) => {
+        // Catching any 400 status or general errors
+        console.log("Error: ", err);
+      });
+  };
+
   return (
     <>
       {pageLoading.verifytoken && pageLoading.pageData ? (
@@ -1216,7 +1275,8 @@ const Profile: React.FC = () => {
                       <div className="w-[100%] flex justify-between">
                         <div
                           className={
-                            localStorage.getItem("refUtId") === "5"
+                            localStorage.getItem("refUtId") === "5" ||
+                            localStorage.getItem("refUtId") === "6"
                               ? "w-[48%]"
                               : "w-[100%]"
                           }
@@ -1233,7 +1293,8 @@ const Profile: React.FC = () => {
                           />
                         </div>
 
-                        {localStorage.getItem("refUtId") === "5" ? (
+                        {localStorage.getItem("refUtId") === "5" ||
+                        localStorage.getItem("refUtId") === "6" ? (
                           <div className="w-[48%]">
                             <TextInput
                               label="Occupation *"
@@ -1557,7 +1618,8 @@ const Profile: React.FC = () => {
               </div>
             </form>
 
-            {localStorage.getItem("refUtId") === "5" ? (
+            {localStorage.getItem("refUtId") === "5" ||
+            localStorage.getItem("refUtId") === "6" ? (
               <>
                 {/* Genderal Health */}
                 <form
@@ -2315,10 +2377,10 @@ const Profile: React.FC = () => {
                     <div className="text-[1rem] lg:text-[25px] font-bold">
                       Professtional Exprience
                     </div>
-                    {edits.therapy ? (
+                    {edits.prof ? (
                       <div
                         className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
-                        onClick={handletherapy}
+                        onClick={handleprof}
                       >
                         Save&nbsp;&nbsp;
                         <i className="text-[15px] pi pi-check"></i>
@@ -2326,7 +2388,7 @@ const Profile: React.FC = () => {
                     ) : (
                       <div
                         onClick={() => {
-                          editform("therapy");
+                          editform("prof");
                         }}
                         className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
                       >
@@ -2343,9 +2405,14 @@ const Profile: React.FC = () => {
                           name="yearexprience"
                           id="yearexprience"
                           type="number"
-                          // onChange={handleInputVal}
-                          // value={inputs.therapydurationproblem}
-                          // readonly={!edits.therapy}
+                          onChange={(e) => {
+                            setEmployeeData({
+                              ...employeeData,
+                              refExperence: e.target.value,
+                            });
+                          }}
+                          value={employeeData.refExperence}
+                          readonly={!edits.prof}
                         />
                       </div>
                       <div className="w-[100%] lg:w-[48%]">
@@ -2354,9 +2421,14 @@ const Profile: React.FC = () => {
                           name="specialization"
                           id="specialization"
                           type="text"
-                          // onChange={handleInputVal}
-                          // value={inputs.therapypasthistory}
-                          // readonly={!edits.therapy}
+                          onChange={(e) => {
+                            setEmployeeData({
+                              ...employeeData,
+                              refSpecialization: e.target.value,
+                            });
+                          }}
+                          value={employeeData.refSpecialization}
+                          readonly={!edits.prof}
                         />
                       </div>
                     </div>
@@ -2414,9 +2486,11 @@ const Profile: React.FC = () => {
                 </div>
 
                 {passwordError.status ? (
-                  <div className="mb-4">
-                    <ErrorMessage message={passwordError.message} />
-                  </div>
+                  <>
+                    <div className="mb-4">
+                      <ErrorMessage message={passwordError.message} />
+                    </div>
+                  </>
                 ) : null}
 
                 <div className="w-[100%] flex justify-start">

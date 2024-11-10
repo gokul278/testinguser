@@ -72,7 +72,7 @@ const Notifications: React.FC = () => {
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
-        usernameid: data.data[0].refUserName,
+        usernameid: data.data[0].refusertype,
         profileimg: data.profileFile,
       });
 
@@ -168,13 +168,13 @@ const Notifications: React.FC = () => {
                     />
                   </div>
 
-                  <div
+                  {/* <div
                     className="filter w-full md:w-3/12 mx-auto"
                     style={{ alignItems: "end", justifyContent: "end" }}
                   >
                     <p className="pr-5">Clear Filter</p>
                     <p>Apply Filter</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <Divider />

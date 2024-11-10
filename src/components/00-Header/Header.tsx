@@ -172,7 +172,7 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     {
       path: "/staff/registeredUsers",
-      name: "Form Submitted Users",
+      name: "Form Submitted",
       icon: <HiOutlineUsers />,
     },
     {
@@ -206,8 +206,13 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       icon: <HiOutlineUsers />,
     },
     {
+      path: "/therapist/approve",
+      name: "Therapist Users",
+      icon: <HiOutlineUserGroup />,
+    },
+    {
       path: "/staff/registeredUsers",
-      name: "Form Submitted Users",
+      name: "Form Submitted",
       icon: <HiOutlineUsers />,
     },
     {
@@ -215,11 +220,7 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       name: "Signed Up (Client)",
       icon: <HiOutlineUserGroup />,
     },
-    // {
-    //   path: "/therapist/approve",
-    //   name: "Therapist Users",
-    //   icon: <HiOutlineUserGroup />,
-    // },
+    
     {
       path: "/dir/staff",
       name: "Staff / Employee",
@@ -314,58 +315,58 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       name: "All Users",
       icon: <HiOutlineUsers />,
     },
-    {
-      path: "/staff/registeredUsers",
-      name: "Form Submitted Users",
-      icon: <HiOutlineUsers />,
-    },
-    {
-      path: "/staff/signedupUsers",
-      name: "Signed Up (Client)",
-      icon: <HiOutlineUserGroup />,
-    },
+    // {
+    //   path: "/staff/registeredUsers",
+    //   name: "Form Submitted Users",
+    //   icon: <HiOutlineUsers />,
+    // },
+    // {
+    //   path: "/staff/signedupUsers",
+    //   name: "Signed Up (Client)",
+    //   icon: <HiOutlineUserGroup />,
+    // },
     {
       path: "/therapist/approve",
       name: "Therapist Users",
       icon: <HiOutlineUserGroup />,
     },
-    {
-      path: "/dir/staff",
-      name: "Staff / Employee",
-      icon: <AiOutlineUser />,
-    },
+    // {
+    //   path: "/dir/staff",
+    //   name: "Staff / Employee",
+    //   icon: <AiOutlineUser />,
+    // },
     {
       path: "/staff/feedback",
       name: "Feedback",
       icon: <BiMessage />,
     },
-    {
-      path: "/staff/transaction",
-      name: "Transactions",
-      icon: <IoIosSwap />,
-    },
-    {
-      path: "/staff/payroll",
-      name: "Payroll",
-      icon: <PiCreditCard />,
-    },
-    {
-      path: "/reports",
-      name: "Directors - Reports",
-      icon: <IoBarChartOutline />,
-    },
-    { path: "/blogs", name: "Directors - Blogs", icon: <TfiWrite /> },
-    { path: "/editNotes", name: "Directors - Notes", icon: <CiPen /> },
-    {
-      path: "/restrictions",
-      name: "Directors - Restrictions",
-      icon: <RiSpam2Line />,
-    },
-    {
-      path: "/dir/organization",
-      name: "Organization Chart",
-      icon: <SlOrganization />,
-    },
+    // {
+    //   path: "/staff/transaction",
+    //   name: "Transactions",
+    //   icon: <IoIosSwap />,
+    // },
+    // {
+    //   path: "/staff/payroll",
+    //   name: "Payroll",
+    //   icon: <PiCreditCard />,
+    // },
+    // {
+    //   path: "/reports",
+    //   name: "Directors - Reports",
+    //   icon: <IoBarChartOutline />,
+    // },
+    // { path: "/blogs", name: "Directors - Blogs", icon: <TfiWrite /> },
+    // { path: "/editNotes", name: "Directors - Notes", icon: <CiPen /> },
+    // {
+    //   path: "/restrictions",
+    //   name: "Directors - Restrictions",
+    //   icon: <RiSpam2Line />,
+    // },
+    // {
+    //   path: "/dir/organization",
+    //   name: "Organization Chart",
+    //   icon: <SlOrganization />,
+    // },
     { path: "/users/profile", name: "Profile", icon: <CiUser /> },
     {
       path: "/users/support",

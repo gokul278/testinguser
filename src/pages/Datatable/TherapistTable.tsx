@@ -13,6 +13,7 @@ import { Sidebar } from "primereact/sidebar";
 
 import { FilterMatchMode } from "primereact/api";
 import CryptoJS from "crypto-js";
+import UserProfileView from "../UserProfileView/UserProfileView";
 
 interface Customer {
   id: string;
@@ -305,8 +306,8 @@ export default function TherapistTable() {
     }
   };
 
-  const onUserIdClick = (id: string, rowData: string) => {
-    setSelectedUserId(rowData);
+  const onUserIdClick = (id: string) => {
+    setSelectedUserId(id);
     fetchUserDetails(id);
 
     setVisibleLeft(true);
@@ -318,7 +319,7 @@ export default function TherapistTable() {
         label={rowData.userId}
         className="p-button-link"
         style={{ textAlign: "start" }}
-        onClick={() => onUserIdClick(rowData.id, rowData.userId)}
+        onClick={() => onUserIdClick(rowData.id)}
       />
     );
   };
@@ -373,14 +374,14 @@ export default function TherapistTable() {
     }
   };
 
-  const handleTherapyCheckboxChange = (e, customerId) => {
+  const handleTherapyCheckboxChange = (e: any, customerId: any) => {
     setTherapyStatus({
       ...therapyStatus,
       [customerId]: e.target.checked,
     });
   };
 
-  const therapyCheckboxTemplate = (rowData) => {
+  const therapyCheckboxTemplate = (rowData: any) => {
     return (
       <input
         type="checkbox"
@@ -479,131 +480,13 @@ export default function TherapistTable() {
         visible={visibleLeft}
         position="right"
         onHide={() => setVisibleLeft(false)}
-        style={{ inlineSize: "60vw" }}
+        style={{ inlineSize: "75vw" }}
       >
-        <h2>Registered User Details</h2>
-        <p>
+        <h2>Therapist User</h2>
+        {/* <p>
           {selectedUserId ? `User ID: ${selectedUserId}` : "No user selected"}
-        </p>
-        <div className="card">
-          <TabView>
-            <TabPanel header="User Detail">
-              <p className="m-0">
-                <Fieldset
-                  legend={
-                    selectedUserId ? `${selectedUserId}` : "No user selected"
-                  }
-                >
-                  {userDetails ? (
-                    <div>
-                      <p>
-                        <strong>Name:</strong> {userDetails.refStFName}{" "}
-                        {userDetails.refStLName}
-                      </p>
-                      <p>
-                        <strong>Email:</strong> {userDetails.refCtEmail}
-                      </p>
-                      <p>
-                        <strong>DOB:</strong> {userDetails.refStDOB}
-                      </p>
-                    </div>
-                  ) : (
-                    <p>No user details available.</p>
-                  )}
-                </Fieldset>
-              </p>
-              {userDetails ? (
-                <div className="contents">
-                  <div className="card">
-                    <h5 className="mb-4">User Profile</h5>
-                    <table className="w-full">
-                      <tbody>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Phone</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refCtEmail}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Gender</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refStSex}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Qualification
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refQualification}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Occupation
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refOccupation}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Height</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refHeight}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Weight</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refWeight}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Blood Group
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refBlood}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                <p>No user details available.</p>
-              )}
-            </TabPanel>
-            <TabPanel header="Audit">
-              <p className="m-0">
-                <DataTable
-                  value={UserDetailss}
-                  tableStyle={{ inlineSize: "50rem" }}
-                >
-                  <Column
-                    header="S.No"
-                    body={(rowData, options) => options.rowIndex + 1}
-                  />{" "}
-                  <Column
-                    field="transData"
-                    header="Action"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                  <Column
-                    field="transTime"
-                    header="Date"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                  <Column
-                    field="refUpdatedBy"
-                    header="Performed By"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                </DataTable>
-              </p>
-            </TabPanel>
-          </TabView>
-        </div>
+        </p> */}
+        <UserProfileView refid={selectedUserId} />
       </Sidebar>
     </div>
   );

@@ -13,6 +13,7 @@ import { Sidebar } from "primereact/sidebar";
 import CryptoJS from "crypto-js";
 
 import { FilterMatchMode } from "primereact/api"; // Import FilterMatchMode for global filtering
+import UserProfileView from "../UserProfileView/UserProfileView";
 
 interface Customer {
   id: string;
@@ -232,9 +233,8 @@ export default function StaffDatas() {
     }
   };
 
-  const onUserIdClick = (id: string, rowData: string) => {
-    setSelectedUserId(rowData);
-    console.log("rowData", rowData);
+  const onUserIdClick = (id: string) => {
+    setSelectedUserId(id);
     fetchUserDetails(id);
 
     setVisibleLeft(true);
@@ -246,7 +246,7 @@ export default function StaffDatas() {
         label={rowData.userId}
         className="p-button-link"
         style={{ textAlign: "start" }}
-        onClick={() => onUserIdClick(rowData.id, rowData.userId)}
+        onClick={() => onUserIdClick(rowData.id)}
       />
     );
   };
@@ -326,128 +326,7 @@ export default function StaffDatas() {
         style={{ inlineSize: "60vw" }}
       >
         <h2>Staff Details</h2>
-        <p>
-          {selectedUserId ? `User ID: ${selectedUserId}` : "No user selected"}
-        </p>
-        <div className="card">
-          <TabView>
-            <TabPanel header="User Detail">
-              <p className="m-0">
-                <Fieldset
-                  legend={
-                    selectedUserId ? `${selectedUserId}` : "No user selected"
-                  }
-                >
-                  {userDetails ? (
-                    <div>
-                      <p>
-                        <strong>Name:</strong> {userDetails.refStFName}{" "}
-                        {userDetails.refStLName}
-                      </p>
-                      <p>
-                        <strong>Email:</strong> {userDetails.refCtEmail}
-                      </p>
-                      <p>
-                        <strong>DOB:</strong> {userDetails.refStDOB}
-                      </p>
-                    </div>
-                  ) : (
-                    <p>No user details available.</p>
-                  )}
-                </Fieldset>
-              </p>
-              {userDetails ? (
-                <div className="contents">
-                  <div className="card">
-                    <h5 className="mb-4">User Profile</h5>
-                    <table className="w-full">
-                      <tbody>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Phone</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refCtEmail}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Gender</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refStSex}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Qualification
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refQualification}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Occupation
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refOccupation}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Height</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refHeight}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">Weight</td>
-                          <td className="text-600 p-2">
-                            {userDetails.refWeight}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="text-900 font-medium p-2">
-                            Blood Group
-                          </td>
-                          <td className="text-600 p-2">
-                            {userDetails.refBlood}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                <p>No user details available.</p>
-              )}
-            </TabPanel>
-            <TabPanel header="Audit">
-              <p className="m-0">
-                <DataTable
-                  value={UserDetailss}
-                  tableStyle={{ inlineSize: "50rem" }}
-                >
-                  <Column
-                    header="S.No"
-                    body={(rowData, options) => options.rowIndex + 1}
-                  />{" "}
-                  <Column
-                    field="transData"
-                    header="Action"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                  <Column
-                    field="transTime"
-                    header="Date"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                  <Column
-                    field="refUpdatedBy"
-                    header="Performed By"
-                    style={{ textTransform: "capitalize" }}
-                  ></Column>
-                </DataTable>
-              </p>
-            </TabPanel>
-          </TabView>
-        </div>
+        <UserProfileView refid={selectedUserId} type={"staff"} />
       </Sidebar>
     </div>
   );
