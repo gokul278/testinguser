@@ -7,8 +7,6 @@ import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
 import Axios from "axios";
 
-import { TabView, TabPanel } from "primereact/tabview";
-import { Fieldset } from "primereact/fieldset";
 import { Sidebar } from "primereact/sidebar";
 
 import { FilterMatchMode } from "primereact/api";
@@ -96,6 +94,7 @@ export default function TherapistTable() {
   const [userDetails, setUserDetails] = useState<Customer | null>(null);
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
 
+  console.log("testing", UserDetailss, userDetails)
   const [therapyStatus, setTherapyStatus] = useState<{
     [key: string]: boolean;
   }>({});

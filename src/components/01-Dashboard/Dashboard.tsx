@@ -33,6 +33,7 @@ const Dashboard = () => {
     profileimg: { contentType: "", content: "" },
   });
 
+  console.log("userdata", userdata);
   const decrypt = (
     encryptedData: string,
     iv: string,

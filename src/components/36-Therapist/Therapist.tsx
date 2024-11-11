@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Divider } from "primereact/divider";
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import TherapistTable from "../../pages/Datatable/TherapistTable";
 import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
 
-interface City {
-  name: string;
-  code: string;
-}
+
 
 type DecryptResult = any;
 
@@ -85,14 +81,6 @@ const Therapist: React.FC = () => {
     });
   }, []);
 
-  const [selectedCities, setSelectedCities] = useState<City[]>([]);
-
-  const cities: City[] = [
-    { name: "All", code: "LDN" },
-    { name: "Front Office", code: "NY" },
-    { name: "Instructor", code: "RM" },
-    { name: "Finance", code: "IST" },
-  ];
 
   return (
     <>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
-import { useNavigate } from "react-router-dom";
 import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import StaffDatas from "../../pages/Datatable/StaffData";
 import { Sidebar } from "primereact/sidebar";
@@ -90,7 +89,6 @@ const StaffData: React.FC = () => {
       });
   }, []);
 
-  const navigate = useNavigate();
   const [selectedCities, setSelectedCities] = useState<City[]>([]);
   const [visibleRight, setVisibleRight] = useState<boolean>(false); // Sidebar visibility state
   const [staffName, setStaffName] = useState<string>(""); // State for staff name
@@ -102,7 +100,6 @@ const StaffData: React.FC = () => {
   const [mobile, setMobile] = useState<string>(""); // Mobile state
   const [panCard, setPanCard] = useState<string>(""); // PAN card state
   const [aadharCard, setAadharCard] = useState<string>(""); // Aadhar card state
-  const [userTypes, setUserTypes] = useState([]); // State to store user types from API
 
   const [dropdownOptions, setDropdownOptions] = useState<
     { label: string; value: number }[]

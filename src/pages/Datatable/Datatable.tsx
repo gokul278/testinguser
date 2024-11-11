@@ -5,7 +5,6 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import CryptoJS from "crypto-js";
 
@@ -61,10 +60,6 @@ export default function Datatables() {
 
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
-  const [displayStatusDialog, setDisplayStatusDialog] = useState(false);
-  const [displayFollowUpDialog, setDisplayFollowUpDialog] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [selectedFollowUp, setSelectedFollowUp] = useState<string>("");
 
   const [followUpOptions, setFollowUpOptions] = useState<Option[]>([]);
   const [statusOptions, setStatusOptions] = useState<Option[]>([]);
@@ -135,7 +130,7 @@ export default function Datatables() {
     fetchCustomers();
   }, []);
 
-  const handleStatusChange = (newStatus: string, customerId: string) => {
+  const handleStatusChange = (newStatus: any, customerId: any) => {
     setCustomers((prevCustomers) =>
       prevCustomers.map((cust) =>
         cust.id === customerId ? { ...cust, status1: newStatus } : cust
@@ -393,7 +388,7 @@ export default function Datatables() {
         />
       </DataTable>
 
-      <Dialog
+      {/* <Dialog
         header="Update Status"
         visible={displayStatusDialog}
         onHide={() => setDisplayStatusDialog(false)}
@@ -407,10 +402,13 @@ export default function Datatables() {
             placeholder="Select a status"
           />
         </div>
-        <Button label="Update" onClick={handleStatusChange} />
-      </Dialog>
+        <Button
+          label="Update"
+          onClick={() => handleStatusChange(customers.status1, customers.id)}
+        />
+      </Dialog> */}
 
-      <Dialog
+      {/* <Dialog
         header="Change Follow Up"
         visible={displayFollowUpDialog}
         modal
@@ -430,7 +428,7 @@ export default function Datatables() {
           label="Update"
           onClick={handleFollowUpChange}
         />
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

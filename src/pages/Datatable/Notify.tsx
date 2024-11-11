@@ -45,20 +45,22 @@ interface ApprovalData {
   changes: string;
   label: string;
   olddata: string;
-  newdata: string;
+  newdata: {
+    content?: string;
+  };
   timing: string;
 }
 
-interface UserDetails {
-  id: string;
-  userid: string;
-  changes: string;
-  olddata: string;
-  newdata: string;
-  transactioncount: string;
-  changedby: string;
-  branch: string;
-}
+// interface UserDetails {
+//   id: string;
+//   userid: string;
+//   changes: string;
+//   olddata: string;
+//   newdata: string;
+//   transactioncount: string;
+//   changedby: string;
+//   branch: string;
+// }
 
 type DecryptResult = any;
 
@@ -93,8 +95,6 @@ export default function Notify(selectedType: any) {
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [userDetails, setUserDetails] = useState<Customer | null>(null);
-  const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   const [historyData, setHistoryData] = useState<HistoryData[]>([]);
@@ -152,44 +152,39 @@ export default function Notify(selectedType: any) {
   };
 
   const readDocument = (rowData: ApprovalData) => {
-
-    if (rowData.newdata.content) {
+    if (rowData.newdata?.content) {
       return (
         <>
           <Button
             type="button"
             severity="success"
             onClick={() => {
-              // Assuming `content` is your base64 string for the PDF file
-              const content = rowData.newdata.content;
+              const content = rowData.newdata?.content;
               const filename = rowData.label + ".pdf";
 
-              // Decode base64 to binary and create a Blob
-              const byteCharacters = atob(content);
-              const byteNumbers = new Array(byteCharacters.length);
-              for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              if (content) {
+                const byteCharacters = atob(content);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                  byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: "application/pdf" });
+
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+
+                URL.revokeObjectURL(link.href);
               }
-              const byteArray = new Uint8Array(byteNumbers);
-              const blob = new Blob([byteArray], {
-                type: "application/pdf",
-              });
-
-              // Create a download link and trigger it
-              const link = document.createElement("a");
-              link.href = URL.createObjectURL(blob);
-              link.download = filename;
-              link.click();
-
-              // Release memory
-              URL.revokeObjectURL(link.href);
             }}
             label="Download"
           />
         </>
       );
     } else {
-      return <p>{rowData.newdata}</p>;
+      <p>{rowData.newdata?.content || "No content available"}</p>;
     }
   };
 

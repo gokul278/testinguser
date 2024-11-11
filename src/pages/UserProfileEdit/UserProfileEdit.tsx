@@ -137,11 +137,11 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
     backpain: false,
   });
 
-  const [userdata, setuserdata] = useState({
-    username: "",
-    usernameid: "",
-    profileimg: { contentType: "", content: "" },
-  });
+  // const [userdata, setuserdata] = useState({
+  //   username: "",
+  //   usernameid: "",
+  //   profileimg: { contentType: "", content: "" },
+  // });
 
   // useEffect(() => {
   //   Axios.get(import.meta.env.VITE_API_URL + "/validateTokenData", {
@@ -295,77 +295,77 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
     });
   }, []);
 
-  const [loading, setLoading] = useState({
-    changeimg: false,
-  });
+  // const [loading, setLoading] = useState({
+  //   changeimg: false,
+  // });
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Handle the file input change
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setLoading({
-      ...loading,
-      changeimg: true,
-    });
-    const file = event.target.files?.[0] || null;
+  // const handleImageChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   setLoading({
+  //     ...loading,
+  //     changeimg: true,
+  //   });
+  //   const file = event.target.files?.[0] || null;
 
-    if (file) {
-      handleImageUpload(file); // Pass the file directly to the upload function
-    }
-  };
+  //   if (file) {
+  //     handleImageUpload(file); // Pass the file directly to the upload function
+  //   }
+  // };
 
   // Handle the image upload
-  const handleImageUpload = async (file: any) => {
-    if (!file) {
-      setLoading({
-        ...loading,
-        changeimg: false,
-      });
-      alert("Please select an image first.");
-      return;
-    }
+  // const handleImageUpload = async (file: any) => {
+  //   if (!file) {
+  //     setLoading({
+  //       ...loading,
+  //       changeimg: false,
+  //     });
+  //     alert("Please select an image first.");
+  //     return;
+  //   }
 
-    try {
-      const response = await Axios.post(
-        import.meta.env.VITE_API_URL + "/director/addEmployeeDocument",
-        { file: file },
-        {
-          headers: {
-            Authorization: localStorage.getItem("JWTtoken"),
-            "Content-Type": "multipart/form-data", // Set content type to form-data
-          },
-        }
-      );
+  //   try {
+  //     const response = await Axios.post(
+  //       import.meta.env.VITE_API_URL + "/director/addEmployeeDocument",
+  //       { file: file },
+  //       {
+  //         headers: {
+  //           Authorization: localStorage.getItem("JWTtoken"),
+  //           "Content-Type": "multipart/form-data", // Set content type to form-data
+  //         },
+  //       }
+  //     );
 
-      const data = decrypt(
-        response.data[1],
-        response.data[0],
-        import.meta.env.VITE_ENCRYPTION_KEY
-      );
+  //     const data = decrypt(
+  //       response.data[1],
+  //       response.data[0],
+  //       import.meta.env.VITE_ENCRYPTION_KEY
+  //     );
 
-      console.log(data);
+  //     console.log(data);
 
-      setInputs({
-        ...inputs,
-        profilefile: data.filePath,
-      });
+  //     setInputs({
+  //       ...inputs,
+  //       profilefile: data.filePath,
+  //     });
 
-      setuserdata({
-        ...userdata,
-        profileimg: data.filePath,
-      });
+  //     setuserdata({
+  //       ...userdata,
+  //       profileimg: data.filePath,
+  //     });
 
-      setLoading({
-        ...loading,
-        changeimg: false,
-      });
+  //     setLoading({
+  //       ...loading,
+  //       changeimg: false,
+  //     });
 
-      console.log("Image uploaded successfully:", data);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  };
+  //     console.log("Image uploaded successfully:", data);
+  //   } catch (error) {
+  //     console.error("Error uploading image:", error);
+  //   }
+  // };
 
   const calculateAge = (dob: string) => {
     const dobDate = new Date(dob);

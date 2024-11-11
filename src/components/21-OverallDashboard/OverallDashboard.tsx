@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./OverallDashboard.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { Button, DataTable, Chart, Column, Menu } from "primereact";
+import { DataTable } from "primereact/datatable";
+import { Chart } from "primereact/chart";
+import { Column } from "primereact/column";
 import { Divider } from "primereact/divider";
-
-import { AiOutlineUser } from "react-icons/ai";
 
 import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
@@ -536,12 +536,12 @@ const OverallDashboard: React.FC = () => {
                             <Column
                               field="sno"
                               header="S.No"
-                              style={{ inlinesi: "35%" }}
+                              style={{ inlineSize: "35%" }}
                             />
                             <Column
                               field="name"
                               header="Name"
-                              style={{ inlinesi: "35%" }}
+                              style={{ inlineSize: "35%" }}
                             />
                             <Column
                               field="transTime"
@@ -571,12 +571,12 @@ const OverallDashboard: React.FC = () => {
                           <Column
                             field="sno"
                             header="S.No"
-                            style={{ inlinesi: "35%" }}
+                            style={{ inlineSize: "35%" }}
                           />
                           <Column
                             field="name"
                             header="Name"
-                            style={{ inlinesi: "35%" }}
+                            style={{ inlineSize: "35%" }}
                           />
                           <Column
                             field="transTime"
@@ -766,12 +766,12 @@ const OverallDashboard: React.FC = () => {
                           <Column
                             field="sno"
                             header="S.No"
-                            style={{ inlinesi: "35%" }}
+                            style={{ inlineSize: "35%" }}
                           />
                           <Column
                             field="name"
                             header="Name"
-                            style={{ inlinesi: "35%" }}
+                            style={{ inlineSize: "35%" }}
                           />
                           <Column
                             field="transTime"

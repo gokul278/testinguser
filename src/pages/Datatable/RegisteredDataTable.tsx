@@ -9,10 +9,13 @@ import Axios from "axios";
 
 import { Sidebar } from "primereact/sidebar";
 
-import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { FilterMatchMode } from "primereact/api";
 
 interface Customer {
+  currentStatus: string;
+  nextStatus: string | null;
   id: string;
+  refUtId: any;
   userId: string;
   fname: string;
   lname: string;
@@ -23,8 +26,6 @@ interface Customer {
   refStFName: string;
   refCtEmail: string;
   refStLName: string;
-  nextStatus: string;
-  currentStatus: string;
   comments?: string;
   commentEnabled?: boolean;
 }
@@ -90,39 +91,42 @@ export default function RegisteredDataTable() {
   const [userDetails, setUserDetails] = useState<Customer | null>(null);
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
 
+  console.log("testing", userDetails, UserDetailss);
+
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   // Filters state
-  const [filters, setFilters] = useState({});
-
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
   const initFilters = () => {
-    setFilters({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      fname: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      mobile: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      email: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      date: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
-      },
-      currentStatus: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      nextStatus: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-    });
+    // setFilters({
+    //   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    //   fname: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    //   },
+    //   mobile: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    //   },
+    //   email: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    //   },
+    //   date: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
+    //   },
+    //   currentStatus: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    //   },
+    //   nextStatus: {
+    //     operator: FilterOperator.AND,
+    //     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+    //   },
+    // });
     setGlobalFilterValue("");
   };
 
@@ -293,7 +297,7 @@ export default function RegisteredDataTable() {
             : c
         );
 
-        setCustomers(updatedCustomers);
+        setCustomers(updatedCustomers as Customer[]);
         console.log("Approved:", customer, "Response:", data);
         fetchCustomers();
       }

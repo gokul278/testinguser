@@ -267,8 +267,11 @@ export default function UserDirData() {
       return (
         <>
           Label: {parsedData.label}
-          <br /><br />
-          Old Data: {parsedData.data.oldValue ? parsedData.data.oldValue : "null"} <br /><br />
+          <br />
+          <br />
+          Old Data:{" "}
+          {parsedData.data.oldValue ? parsedData.data.oldValue : "null"} <br />
+          <br />
           New Data: {parsedData.data.newValue}
         </>
       );
@@ -378,7 +381,7 @@ export default function UserDirData() {
                 >
                   <Column
                     header="S.No"
-                    body={(rowData, options) => options.rowIndex + 1}
+                    body={(options) => options.rowIndex + 1}
                   />{" "}
                   <Column
                     field="transData"

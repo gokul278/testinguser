@@ -3,27 +3,16 @@ import "./UsersDir.css";
 
 import { Divider } from "primereact/divider";
 
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import UserDirData from "../../pages/Datatable/UserDirData";
 import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
 
-interface City {
-  name: string;
-  code: string;
-}
+
 
 type DecryptResult = any;
 
 const UsersDir: React.FC = () => {
-  const [selectedCities, setSelectedCities] = useState<City | null>(null);
-  const cities: City[] = [
-    { name: "All", code: "LDN" },
-    { name: "Trial", code: "NY" },
-    { name: "Student", code: "RM" },
-    { name: "Payment Pending", code: "IST" },
-  ];
 
   const [pageLoading, setPageLoading] = useState({
     verifytoken: true,

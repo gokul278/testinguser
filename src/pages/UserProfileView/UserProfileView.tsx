@@ -134,12 +134,12 @@ const UserProfileView: React.FC<UserProfileEditProps> = ({ refid, type }) => {
     prof: false,
   });
 
-  const editform = (event: string) => {
-    setEdits({
-      ...edits,
-      [event]: true,
-    });
-  };
+  // const editform = (event: string) => {
+  //   setEdits({
+  //     ...edits,
+  //     [event]: true,
+  //   });
+  // };
 
   const [options, setOptions] = useState({
     address: false,
@@ -149,11 +149,11 @@ const UserProfileView: React.FC<UserProfileEditProps> = ({ refid, type }) => {
     backpain: false,
   });
 
-  const [userdata, setuserdata] = useState({
-    username: "",
-    usernameid: "",
-    profileimg: { contentType: "", content: "" },
-  });
+  // const [userdata, setuserdata] = useState({
+  //   username: "",
+  //   usernameid: "",
+  //   profileimg: { contentType: "", content: "" },
+  // });
 
   // useEffect(() => {
   //   Axios.get(import.meta.env.VITE_API_URL + "/validateTokenData", {
@@ -347,77 +347,77 @@ const UserProfileView: React.FC<UserProfileEditProps> = ({ refid, type }) => {
     });
   }, []);
 
-  const [loading, setLoading] = useState({
-    changeimg: false,
-  });
+  // const [loading, setLoading] = useState({
+  //   changeimg: false,
+  // });
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Handle the file input change
-  const handleImageChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setLoading({
-      ...loading,
-      changeimg: true,
-    });
-    const file = event.target.files?.[0] || null;
+  // const handleImageChange = async (
+  //   event: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   setLoading({
+  //     ...loading,
+  //     changeimg: true,
+  //   });
+  //   const file = event.target.files?.[0] || null;
 
-    if (file) {
-      handleImageUpload(file); // Pass the file directly to the upload function
-    }
-  };
+  //   if (file) {
+  //     handleImageUpload(file); // Pass the file directly to the upload function
+  //   }
+  // };
 
   // Handle the image upload
-  const handleImageUpload = async (file: any) => {
-    if (!file) {
-      setLoading({
-        ...loading,
-        changeimg: false,
-      });
-      alert("Please select an image first.");
-      return;
-    }
+  // const handleImageUpload = async (file: any) => {
+  //   if (!file) {
+  //     setLoading({
+  //       ...loading,
+  //       changeimg: false,
+  //     });
+  //     alert("Please select an image first.");
+  //     return;
+  //   }
 
-    try {
-      const response = await Axios.post(
-        import.meta.env.VITE_API_URL + "/director/addEmployeeDocument",
-        { file: file },
-        {
-          headers: {
-            Authorization: localStorage.getItem("JWTtoken"),
-            "Content-Type": "multipart/form-data", // Set content type to form-data
-          },
-        }
-      );
+  //   try {
+  //     const response = await Axios.post(
+  //       import.meta.env.VITE_API_URL + "/director/addEmployeeDocument",
+  //       { file: file },
+  //       {
+  //         headers: {
+  //           Authorization: localStorage.getItem("JWTtoken"),
+  //           "Content-Type": "multipart/form-data", // Set content type to form-data
+  //         },
+  //       }
+  //     );
 
-      const data = decrypt(
-        response.data[1],
-        response.data[0],
-        import.meta.env.VITE_ENCRYPTION_KEY
-      );
+  //     const data = decrypt(
+  //       response.data[1],
+  //       response.data[0],
+  //       import.meta.env.VITE_ENCRYPTION_KEY
+  //     );
 
-      console.log(data);
+  //     console.log(data);
 
-      setInputs({
-        ...inputs,
-        profilefile: data.filePath,
-      });
+  //     setInputs({
+  //       ...inputs,
+  //       profilefile: data.filePath,
+  //     });
 
-      setuserdata({
-        ...userdata,
-        profileimg: data.filePath,
-      });
+  //     setuserdata({
+  //       ...userdata,
+  //       profileimg: data.filePath,
+  //     });
 
-      setLoading({
-        ...loading,
-        changeimg: false,
-      });
+  //     setLoading({
+  //       ...loading,
+  //       changeimg: false,
+  //     });
 
-      console.log("Image uploaded successfully:", data);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  };
+  //     console.log("Image uploaded successfully:", data);
+  //   } catch (error) {
+  //     console.error("Error uploading image:", error);
+  //   }
+  // };
 
   const calculateAge = (dob: string) => {
     const dobDate = new Date(dob);
@@ -708,61 +708,61 @@ const UserProfileView: React.FC<UserProfileEditProps> = ({ refid, type }) => {
       });
   };
 
-  const handletherapy = () => {
-    let updatedHealthProblem: any[] = [];
-    conditions.forEach((element) => {
-      if (element.checked === 1) {
-        updatedHealthProblem.push(element.value);
-      }
-    });
+  // const handletherapy = () => {
+  //   let updatedHealthProblem: any[] = [];
+  //   conditions.forEach((element) => {
+  //     if (element.checked === 1) {
+  //       updatedHealthProblem.push(element.value);
+  //     }
+  //   });
 
-    Axios.post(
-      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
+  //   Axios.post(
+  //     import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
-      {
-        refStId: refid,
-        presentHealth: {
-          refBackpain: inputs.backpainscale,
-          refDrName: inputs.caredoctorname,
-          refHospital: inputs.caredoctorhospital,
-          refMedicalDetails: inputs.pastmedicaldetails,
-          refOtherActivities: inputs.pastother,
-          refPresentHealth: updatedHealthProblem,
-          refUnderPhysCare: options.care,
-          refAnythingelse: inputs.therapyanythingelse,
-          refFamilyHistory: inputs.therapyfamilyhistory,
-          refProblem: inputs.therapydurationproblem,
-          refPastHistory: inputs.therapypasthistory,
-        },
-      },
-      {
-        headers: {
-          Authorization: localStorage.getItem("JWTtoken"),
-          "Content-Type": "application/json", // Ensure the content type is set
-        },
-      }
-    )
-      .then((res) => {
-        const data = decrypt(
-          res.data[1],
-          res.data[0],
-          import.meta.env.VITE_ENCRYPTION_KEY
-        );
+  //     {
+  //       refStId: refid,
+  //       presentHealth: {
+  //         refBackpain: inputs.backpainscale,
+  //         refDrName: inputs.caredoctorname,
+  //         refHospital: inputs.caredoctorhospital,
+  //         refMedicalDetails: inputs.pastmedicaldetails,
+  //         refOtherActivities: inputs.pastother,
+  //         refPresentHealth: updatedHealthProblem,
+  //         refUnderPhysCare: options.care,
+  //         refAnythingelse: inputs.therapyanythingelse,
+  //         refFamilyHistory: inputs.therapyfamilyhistory,
+  //         refProblem: inputs.therapydurationproblem,
+  //         refPastHistory: inputs.therapypasthistory,
+  //       },
+  //     },
+  //     {
+  //       headers: {
+  //         Authorization: localStorage.getItem("JWTtoken"),
+  //         "Content-Type": "application/json", // Ensure the content type is set
+  //       },
+  //     }
+  //   )
+  //     .then((res) => {
+  //       const data = decrypt(
+  //         res.data[1],
+  //         res.data[0],
+  //         import.meta.env.VITE_ENCRYPTION_KEY
+  //       );
 
-        console.log(data.success);
+  //       console.log(data.success);
 
-        if (data.success) {
-          setEdits({
-            ...edits,
-            therapy: false,
-          });
-        }
-      })
-      .catch((err) => {
-        // Catching any 400 status or general errors
-        console.log("Error: ", err);
-      });
-  };
+  //       if (data.success) {
+  //         setEdits({
+  //           ...edits,
+  //           therapy: false,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // Catching any 400 status or general errors
+  //       console.log("Error: ", err);
+  //     });
+  // };
 
   return (
     <>

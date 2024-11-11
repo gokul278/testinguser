@@ -7,8 +7,6 @@ import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
 import Axios from "axios";
 
-import { TabView, TabPanel } from "primereact/tabview";
-import { Fieldset } from "primereact/fieldset";
 import { Sidebar } from "primereact/sidebar";
 import CryptoJS from "crypto-js";
 
@@ -77,6 +75,8 @@ export default function StaffDatas() {
   const [userDetails, setUserDetails] = useState<Customer | null>(null);
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
 
+  console.log(UserDetailss, userDetails);
+  
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   // Filters state

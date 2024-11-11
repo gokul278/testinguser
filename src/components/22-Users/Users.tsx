@@ -6,14 +6,8 @@ import { Divider } from "primereact/divider";
 import Datatables from "../../pages/Datatable/Datatable";
 import CryptoJS from "crypto-js";
 
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
-
-interface City {
-  name: string;
-  code: string;
-}
 
 type DecryptResult = any;
 
@@ -85,15 +79,6 @@ const Users: React.FC = () => {
       console.log("Verify Token  Running --- ");
     });
   }, []);
-
-  const [selectedCities, setSelectedCities] = useState<City | null>(null);
-  const cities: City[] = [
-    { name: "New York", code: "NY" },
-    { name: "Rome", code: "RM" },
-    { name: "London", code: "LDN" },
-    { name: "Istanbul", code: "IST" },
-    { name: "Paris", code: "PRS" },
-  ];
 
   return (
     <>
