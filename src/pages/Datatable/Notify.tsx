@@ -133,7 +133,7 @@ export default function Notify(selectedType: any) {
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
-      console.log("response", data);
+      console.log("response ---------", data);
       const fetchedCustomers: Customer[] = data.data.map((customer: any) => ({
         id: customer.refStId,
         userId: customer.refSCustId,
@@ -152,6 +152,7 @@ export default function Notify(selectedType: any) {
   };
 
   const readDocument = (rowData: ApprovalData) => {
+
     if (rowData.newdata.content) {
       return (
         <>

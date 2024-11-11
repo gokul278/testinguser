@@ -131,7 +131,7 @@ const Offers: React.FC = () => {
 
           setWorkSpaceData({
             refOfferId: rowData.refOfId,
-            description: rowData.refDescription,
+            description: rowData.refContent,
             minimumval: rowData.refMin,
             offers: rowData.refOffer,
             startingDate: rowData.refStartAt,
@@ -210,7 +210,7 @@ const Offers: React.FC = () => {
           refOfId: workSpaceData.refOfferId,
           refMin: workSpaceData.minimumval,
           refOffer: workSpaceData.offers,
-
+          refContent: workSpaceData.description,
           refStartAt: formatDateToYYYYMMDD(workSpaceData.startingDate),
           refEndAt: formatDateToYYYYMMDD(workSpaceData.endingDate),
         },
@@ -257,7 +257,7 @@ const Offers: React.FC = () => {
           refOfferId: branch,
           refMin: workSpaceData.minimumval,
           refOffer: workSpaceData.offers,
-          refDescription: workSpaceData.description,
+          refContent: workSpaceData.description,
           refStartAt: formatDateToYYYYMMDD(workSpaceData.startingDate),
           refEndAt: formatDateToYYYYMMDD(workSpaceData.endingDate),
         },
@@ -451,7 +451,7 @@ const Offers: React.FC = () => {
                     onChange={(e: any) => {
                       setWorkSpaceData({
                         ...workSpaceData,
-                        description: e.value,
+                        description: e.target.value,
                       });
                     }}
                     required

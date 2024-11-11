@@ -245,11 +245,6 @@ const Profile: React.FC = () => {
       console.log("UserData Running --- ");
       console.log(data);
 
-      setEmployeeData({
-        refExperence: data.data.EmployeeData.refExperence,
-        refSpecialization: data.data.EmployeeData.refSpecialization,
-      });
-
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
 
       if (data.data.presentHealth) {
@@ -279,6 +274,11 @@ const Profile: React.FC = () => {
 
         // Step 3: Set the final updated conditions in state
         setConditions(updatedConditions);
+      } else {
+        setEmployeeData({
+          refExperence: data.data.EmployeeData.refExperence,
+          refSpecialization: data.data.EmployeeData.refSpecialization,
+        });
       }
 
       setModeofContact(data.data.modeOfCommunication);

@@ -30,6 +30,11 @@ const lineData = {
 
 const OverallDashboard: React.FC = () => {
   const [products, setProducts] = useState([]);
+
+  const [trialSampleData, setTrailSampleData] = useState([]);
+
+  const [paymentSampleData, setPaymentSampleData] = useState([]);
+
   const [formSubmitted, setFormSubmitted] = useState({
     today: 0,
     futureToday: 0,
@@ -38,38 +43,13 @@ const OverallDashboard: React.FC = () => {
     today: 0,
     futureToday: 0,
   });
-  const [overallUserStatus, setOverallUserStatus] = useState({
-    userLabel1: "Registered",
-    count1: 0,
-    percentage1: 0,
-    userLabel2: "Trial",
-    count2: 0,
-    percentage2: 0,
-    userLabel3: "Student",
-    count3: 0,
-    percentage3: 0,
-    userLabel4: "Client",
-    count4: 0,
-    percentage4: 0,
-    userLabel5: "Payment Pending",
-    count5: 0,
-    percentage5: 0,
+  const [trailCount, setTrialCount] = useState({
+    today: 0,
+    futureToday: 0,
   });
+  const [overallUserStatus, setOverallUserStatus] = useState([]);
 
-  const [overallEmployeeStatus, setOverallEmployeeStatus] = useState({
-    label1: "Instructor",
-    count1: 0,
-    percentage1: 0,
-    label2: "Finance",
-    count2: 0,
-    percentage2: 0,
-    label3: "Front Office",
-    count3: 0,
-    percentage3: 0,
-  });
-
-  const menu1 = useRef(null);
-  const menu2 = useRef(null);
+  const [overallEmployeeStatus, setOverallEmployeeStatus] = useState([]);
 
   const lineOptions = {
     plugins: {
@@ -117,58 +97,68 @@ const OverallDashboard: React.FC = () => {
 
         console.log("API Response: ", data);
 
-        const recentData = data.data.registerSampleData;
-        console.log("recentData", recentData);
-        const mappedData = recentData.map((item, index) => ({
-          sno: index + 1,
-          name: `${item.refStFName} ${item.refStLName}`,
-          transTime: item.transTime,
-        }));
-        setProducts(mappedData);
-
-        setFormSubmitted({
-          today: data.data.registerCount[0].count_today,
-          futureToday: data.data.registerCount[0].count_other_days,
-        });
         setFutureClient({
           today: data.data.signUpCount[0].count_today,
           futureToday: data.data.signUpCount[0].count_other_days,
         });
 
-        const OverallUser = data.data.userTypeCount;
+        if (localStorage.getItem("refUtId") === "11") {
+        } else {
+          setTrialCount({
+            today: data.data.trailCount[0].count_today,
+            futureToday: data.data.trailCount[0].count_other_days,
+          });
+        }
 
-        setOverallUserStatus({
-          ...overallUserStatus,
-          count1: OverallUser[0].count,
-          percentage1: OverallUser[0].percentage,
-          count2: OverallUser[1].count,
-          percentage2: OverallUser[1].percentage,
-          count3: OverallUser[2].count,
-          percentage3: OverallUser[2].percentage,
-          count4: OverallUser[3].count,
-          percentage4: OverallUser[3].percentage,
-          count5: OverallUser[4].count,
-          percentage5: OverallUser[4].percentage,
-        });
+        if (localStorage.getItem("refUtId") === "4") {
+        } else {
+          setFormSubmitted({
+            today: data.data.registerCount[0].count_today,
+            futureToday: data.data.registerCount[0].count_other_days,
+          });
 
-        const OverallEmployee = data.data.staffCount;
+          const recentData = data.data.registerSampleData;
+          console.log("recentData", recentData);
+          const mappedData = recentData.map((item: any, index: any) => ({
+            sno: index + 1,
+            name: `${item.refStFName} ${item.refStLName}`,
+            transTime: item.transTime,
+          }));
+          setProducts(mappedData);
 
-        setOverallEmployeeStatus({
-          ...overallEmployeeStatus,
-          count1: OverallEmployee[0].count,
-          percentage1: OverallEmployee[0].percentage,
-          count2: OverallEmployee[1].count,
-          percentage2: OverallEmployee[1].percentage,
-          count3: OverallEmployee[2].count,
-          percentage3: OverallEmployee[2].percentage,
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching the data: ", error);
+          const trailSampleData = data.data.trailSampleData;
+          console.log("trailSampleData", trailSampleData);
+          const trailSampleDatamappedData = trailSampleData.map(
+            (item: any, index: any) => ({
+              sno: index + 1,
+              name: `${item.refStFName} ${item.refStLName}`,
+              transTime: item.transTime,
+            })
+          );
+          setTrailSampleData(trailSampleDatamappedData);
+
+          console.log(
+            "trailSampleDatamappedData ---------------",
+            trailSampleDatamappedData
+          );
+
+          const paymentPendingSampleData = data.data.paymentPendingSampleData;
+          console.log("paymentPendingSampleData", paymentPendingSampleData);
+          const paymentPendingSampleDatamappedData =
+            paymentPendingSampleData.map((item: any, index: any) => ({
+              sno: index + 1,
+              name: `${item.refStFName} ${item.refStLName}`,
+              transTime: item.transTime,
+            }));
+          setPaymentSampleData(paymentPendingSampleDatamappedData);
+        }
+
+        setOverallUserStatus(data.data.userTypeCount);
+
+        setOverallEmployeeStatus(data.data.staffCount);
+        console.log(overallEmployeeStatus);
       });
   }, []);
-
-  const navigate = useNavigate();
 
   const [pageLoading, setPageLoading] = useState({
     verifytoken: true,
@@ -299,41 +289,10 @@ const OverallDashboard: React.FC = () => {
           </div>
           <div className="cardTesting">
             {localStorage.getItem("refUtId") === "4" ? (
-              <Link
-                to="/staff/registeredUsers"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div className="cardOutline card">
-                  <div className="header">
-                    <i className="pi pi-user-plus"></i>
-                    <h3>Formasas Submitted</h3>
-                  </div>
-                  <div className="counts">
-                    <div className="countOne">
-                      <h3>{formSubmitted.today}</h3>
-                      <h5>Today</h5>
-                    </div>
-                    <div className="w-full md:w-2">
-                      <Divider
-                        layout="vertical"
-                        className="hidden md:flex"
-                      ></Divider>
-                      <Divider
-                        layout="horizontal"
-                        className="flex md:hidden"
-                        align="center"
-                      ></Divider>
-                    </div>
-                    <div className="countOne">
-                      <h3>{formSubmitted.futureToday}</h3>
-                      <h5>Previous Day</h5>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <></>
             ) : (
               <Link
-                to="/staff/registeredUsers"
+                to="/therapist/approve"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <div className="cardOutline card">
@@ -398,7 +357,40 @@ const OverallDashboard: React.FC = () => {
               </div>
             </Link>
 
-            <div className="cardOutline card">
+            <Link
+              to="/staff/registeredUsers"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="cardOutline card">
+                <div className="header">
+                  <i className="pi pi-money-bill"></i>
+                  <h3>Trail & Payment</h3>
+                </div>
+                <div className="counts">
+                  <div className="countOne">
+                    <h3>{trailCount.today}</h3>
+                    <h5>Today</h5>
+                  </div>
+                  <div className="w-full md:w-2">
+                    <Divider
+                      layout="vertical"
+                      className="hidden md:flex"
+                    ></Divider>
+                    <Divider
+                      layout="horizontal"
+                      className="flex md:hidden"
+                      align="center"
+                    ></Divider>
+                  </div>
+                  <div className="countOne">
+                    <h3>{trailCount.futureToday}</h3>
+                    <h5>Previous Day</h5>
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* <div className="cardOutline card">
               <div className="header">
                 <i className="pi pi-calendar"></i>
                 <h3>Attendance</h3>
@@ -424,8 +416,8 @@ const OverallDashboard: React.FC = () => {
                   <h5>Current Batch</h5>
                 </div>
               </div>
-            </div>
-
+            </div> */}
+            {/* 
             <Link
               to="/settings"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -457,7 +449,7 @@ const OverallDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </Link>
+            </Link> */}
           </div>
 
           <div className="overallComponent mt-3" style={{ inlineSize: "100%" }}>
@@ -472,14 +464,14 @@ const OverallDashboard: React.FC = () => {
                     <div className="flex justify-content-between align-items-center mb-5">
                       <h3 className="text-[#f95005]">Overall User Status</h3>
                       <div>
-                        <Button
+                        {/* <Button
                           type="button"
                           icon="pi pi-ellipsis-v"
                           rounded
                           text
                           className="p-button-plain"
                           onClick={(event: any) => menu1.current?.toggle(event)}
-                        />
+                        /> */}
                         {/* <Menu
                           ref={menu1}
                           popup
@@ -491,138 +483,76 @@ const OverallDashboard: React.FC = () => {
                       </div>
                     </div>
                     <ul className="list-none p-0 m-0">
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallUserStatus.userLabel1}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallUserStatus.count1}
+                      {overallUserStatus.map((element: any) => (
+                        <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                          <div>
+                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
+                              {element.user_type_label}
+                            </span>
+                            <div className="mt-1 text-600">
+                              Count : {element.count}
+                            </div>
                           </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
+                          <div className="mt-2 md:mt-0 flex align-items-center">
                             <div
-                              className="bg-orange-500 h-full"
-                              style={{
-                                inlineSize: overallUserStatus.percentage1 + "%",
-                              }}
-                            />
+                              className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                              style={{ blockSize: "8px" }}
+                            >
+                              <div
+                                className="bg-orange-500 h-full"
+                                style={{
+                                  inlineSize: element.percentage + "%",
+                                }}
+                              />
+                            </div>
+                            <span className="text-orange-500 ml-3 font-medium">
+                              {element.percentage} %
+                            </span>
                           </div>
-                          <span className="text-orange-500 ml-3 font-medium">
-                            {overallUserStatus.percentage1} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallUserStatus.userLabel2}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallUserStatus.count2}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-cyan-500 h-full"
-                              style={{
-                                inlineSize: overallUserStatus.percentage2 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-cyan-500 ml-3 font-medium">
-                            {overallUserStatus.percentage2} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallUserStatus.userLabel3}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallUserStatus.count3}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-pink-500 h-full"
-                              style={{
-                                inlineSize: overallUserStatus.percentage3 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-pink-500 ml-3 font-medium">
-                            {overallUserStatus.percentage3} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallUserStatus.userLabel4}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallUserStatus.count4}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-green-500 h-full"
-                              style={{
-                                inlineSize: overallUserStatus.percentage4 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-green-500 ml-3 font-medium">
-                            {overallUserStatus.percentage4} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallUserStatus.userLabel5}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallUserStatus.count5}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-green-500 h-full"
-                              style={{
-                                inlineSize: overallUserStatus.percentage5 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-green-500 ml-3 font-medium">
-                            {overallUserStatus.percentage5} %
-                          </span>
-                        </div>
-                      </li>
+                        </li>
+                      ))}
                     </ul>
                   </div>
+
+                  {localStorage.getItem("refUtId") === "4" ? (
+                    <></>
+                  ) : (
+                    <div className="mt-5">
+                      <Link
+                        to="/staff/registeredUsers"
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <div className="card">
+                          <h3 className="text-[#f95005]">
+                            Today Form Submitted Clients
+                          </h3>
+                          <DataTable
+                            value={products}
+                            rows={5}
+                            paginator
+                            emptyMessage="No Data"
+                            responsiveLayout="scroll"
+                          >
+                            <Column
+                              field="sno"
+                              header="S.No"
+                              style={{ inlinesi: "35%" }}
+                            />
+                            <Column
+                              field="name"
+                              header="Name"
+                              style={{ inlinesi: "35%" }}
+                            />
+                            <Column
+                              field="transTime"
+                              header="Registered Date"
+                              style={{ inlineSize: "35%" }}
+                            />
+                          </DataTable>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
 
                   <div className="mt-5">
                     <Link
@@ -630,12 +560,13 @@ const OverallDashboard: React.FC = () => {
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
                       <div className="card">
-                        <h5>Today Form Submitted Clients</h5>
+                        <h3 className="text-[#f95005]">Trail Students</h3>
                         <DataTable
-                          value={products}
+                          value={trialSampleData}
                           rows={5}
                           paginator
                           responsiveLayout="scroll"
+                          emptyMessage="No Data"
                         >
                           <Column
                             field="sno"
@@ -752,13 +683,16 @@ const OverallDashboard: React.FC = () => {
 
                 {/* SALES OVERVIEW AND NOTIFICATIONS */}
                 <div className="col-12 xl:col-6 dashboardAnalytics">
-                  <div className="card mt-2">
-                    <div className="flex justify-content-between align-items-center mb-5">
-                      <h3 className="text-[#f95005]">
-                        Overall Employee Status
-                      </h3>
-                      <div>
-                        {/* <Button
+                  {localStorage.getItem("refUtId") === "4" ? (
+                    <></>
+                  ) : (
+                    <div className="card mt-2">
+                      <div className="flex justify-content-between align-items-center mb-5">
+                        <h3 className="text-[#f95005]">
+                          Overall Employee Status
+                        </h3>
+                        <div>
+                          {/* <Button
                           type="button"
                           icon="pi pi-ellipsis-v"
                           rounded
@@ -774,117 +708,85 @@ const OverallDashboard: React.FC = () => {
                             { label: "Option Two", icon: "pi pi-fw pi-minus" },
                           ]}
                         /> */}
+                        </div>
                       </div>
+                      <ul className="list-none p-0 m-0">
+                        {overallEmployeeStatus.map((element: any) => (
+                          <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                            <div>
+                              <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
+                                {element.user_type_label}
+                              </span>
+                              <div className="mt-1 text-600">
+                                Count : {element.count}
+                              </div>
+                            </div>
+                            <div className="mt-2 md:mt-0 flex align-items-center">
+                              <div
+                                className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                                style={{ blockSize: "8px" }}
+                              >
+                                <div
+                                  className="bg-orange-500 h-full"
+                                  style={{
+                                    inlineSize: element.percentage + "%",
+                                  }}
+                                />
+                              </div>
+                              <span className="text-orange-500 ml-3 font-medium">
+                                {element.percentage} %
+                              </span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <ul className="list-none p-0 m-0">
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallEmployeeStatus.label1}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallEmployeeStatus.count1}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-orange-500 h-full"
-                              style={{
-                                inlineSize:
-                                  overallEmployeeStatus.percentage1 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-orange-500 ml-3 font-medium">
-                            {overallEmployeeStatus.percentage1} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallEmployeeStatus.label2}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallEmployeeStatus.count2}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-cyan-500 h-full"
-                              style={{
-                                inlineSize:
-                                  overallEmployeeStatus.percentage2 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-cyan-500 ml-3 font-medium">
-                            {overallEmployeeStatus.percentage2} %
-                          </span>
-                        </div>
-                      </li>
-                      <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                        <div>
-                          <span className="text-900 font-medium mr-2 mb-1 md:mb-0">
-                            {overallEmployeeStatus.label3}
-                          </span>
-                          <div className="mt-1 text-600">
-                            Count : {overallEmployeeStatus.count3}
-                          </div>
-                        </div>
-                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                          <div
-                            className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                            style={{ blockSize: "8px" }}
-                          >
-                            <div
-                              className="bg-pink-500 h-full"
-                              style={{
-                                inlineSize:
-                                  overallEmployeeStatus.percentage3 + "%",
-                              }}
-                            />
-                          </div>
-                          <span className="text-pink-500 ml-3 font-medium">
-                            {overallEmployeeStatus.percentage3} %
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
+                  )}
                   <div className="card">
                     <h5>October Month Revenue</h5>
                     <Chart type="line" data={lineData} options={lineOptions} />
                   </div>
 
-                  <div className="card mt-4">
+                  <div className="mt-5">
+                    <Link
+                      to="/staff/registeredUsers"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      <div className="card">
+                        <h3 className="text-[#f95005]">
+                          Payment Pending Students
+                        </h3>
+                        <DataTable
+                          value={paymentSampleData}
+                          rows={5}
+                          paginator
+                          responsiveLayout="scroll"
+                          emptyMessage="No Data"
+                        >
+                          <Column
+                            field="sno"
+                            header="S.No"
+                            style={{ inlinesi: "35%" }}
+                          />
+                          <Column
+                            field="name"
+                            header="Name"
+                            style={{ inlinesi: "35%" }}
+                          />
+                          <Column
+                            field="transTime"
+                            header="Registered Date"
+                            style={{ inlineSize: "35%" }}
+                          />
+                        </DataTable>
+                      </div>
+                    </Link>
+                  </div>
+
+                  {/* <div className="card mt-4">
                     <div className="flex align-items-center justify-content-between mb-4">
                       <h5>Notifications</h5>
                       <div>
-                        {/* <Button
-                          type="button"
-                          icon="pi pi-ellipsis-v"
-                          rounded
-                          text
-                          className="p-button-plain"
-                          onClick={(event) => menu2.current?.toggle(event)}
-                        />
-                        <Menu
-                          ref={menu2}
-                          popup
-                          model={[
-                            { label: "Option One", icon: "pi pi-fw pi-plus" },
-                            { label: "Option Two", icon: "pi pi-fw pi-minus" },
-                          ]}
-                        /> */}
                       </div>
                     </div>
 
@@ -953,7 +855,7 @@ const OverallDashboard: React.FC = () => {
                         </span>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
