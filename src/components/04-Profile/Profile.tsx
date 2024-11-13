@@ -415,7 +415,7 @@ const Profile: React.FC = () => {
 
     try {
       const response = await Axios.post(
-        import.meta.env.VITE_API_URL + "/director/addEmployeeDocument",
+        import.meta.env.VITE_API_URL + "/director/addProfileImage",
         { file: file },
         {
           headers: {
@@ -944,11 +944,13 @@ const Profile: React.FC = () => {
 
   const handleprof = () => {
     Axios.post(
-      import.meta.env.VITE_API_URL + "/staff/ProfileData",
+      import.meta.env.VITE_API_URL + "/staff/userDataUpdate",
 
       {
-        refExperence: employeeData.refExperence,
-        refSpecialization: employeeData.refSpecialization,
+        employeeData: {
+          refExperence: employeeData.refExperence,
+          refSpecialization: employeeData.refSpecialization,
+        },
       },
       {
         headers: {

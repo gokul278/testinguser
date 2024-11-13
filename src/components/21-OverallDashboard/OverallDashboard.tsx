@@ -364,7 +364,7 @@ const OverallDashboard: React.FC = () => {
               <div className="cardOutline card">
                 <div className="header">
                   <i className="pi pi-money-bill"></i>
-                  <h3>Trail & Payment</h3>
+                  <h3>Trial</h3>
                 </div>
                 <div className="counts">
                   <div className="countOne">

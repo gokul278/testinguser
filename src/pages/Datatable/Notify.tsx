@@ -45,9 +45,11 @@ interface ApprovalData {
   changes: string;
   label: string;
   olddata: string;
-  newdata: {
-    content?: string;
-  };
+  newdata:
+    | {
+        content?: string;
+      }
+    | any;
   timing: string;
 }
 
@@ -152,7 +154,11 @@ export default function Notify(selectedType: any) {
   };
 
   const readDocument = (rowData: ApprovalData) => {
-    if (rowData.newdata?.content) {
+    if (!rowData.newdata.content) {
+      return <>{rowData.newdata}</>;
+    }
+
+    if (rowData.newdata.content) {
       return (
         <>
           <Button
@@ -183,8 +189,6 @@ export default function Notify(selectedType: any) {
           />
         </>
       );
-    } else {
-      <p>{rowData.newdata?.content || "No content available"}</p>;
     }
   };
 
