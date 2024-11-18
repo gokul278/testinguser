@@ -313,7 +313,6 @@ export default function UserDirData() {
           header="User ID"
           body={userIdTemplate}
           frozen
-          filter
           sortable
           filterPlaceholder="Search by User ID"
           style={{ inlineSize: "14rem" }}
@@ -321,14 +320,12 @@ export default function UserDirData() {
         <Column
           field="fname"
           header="Name"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />
         <Column
           field="trial"
           header="Current Status"
-          filter
           sortable
           style={{ inlineSize: "14rem", textTransform: "capitalize" }}
         />
@@ -342,7 +339,6 @@ export default function UserDirData() {
         <Column
           field="email"
           header="Email"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />

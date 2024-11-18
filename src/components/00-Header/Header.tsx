@@ -14,6 +14,8 @@ import { CiPen } from "react-icons/ci";
 import { AiOutlineUser } from "react-icons/ai";
 import { SlOrganization } from "react-icons/sl";
 import { AiOutlineBell } from "react-icons/ai";
+import { GrDocumentNotes } from "react-icons/gr";
+import { MdAssignmentAdd } from "react-icons/md";
 
 import { RiSpam2Line } from "react-icons/ri";
 
@@ -220,7 +222,7 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       name: "Signed Up (Client)",
       icon: <HiOutlineUserGroup />,
     },
-    
+
     {
       path: "/dir/staff",
       name: "Staff / Employee",
@@ -230,6 +232,16 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
       path: "/dir/notify",
       name: "User Audit Page",
       icon: <AiOutlineBell />,
+    },
+    {
+      path: "/yoganotes",
+      name: "Add Notes",
+      icon: <MdAssignmentAdd />,
+    },
+    {
+      path: "/assignnotes",
+      name: "Assign Notes",
+      icon: <GrDocumentNotes />,
     },
     {
       path: "/staff/transaction",

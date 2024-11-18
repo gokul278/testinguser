@@ -522,7 +522,6 @@ export default function RegisteredDataTable() {
           field="fname"
           header="Name"
           body={userIdTemplate}
-          filter
           frozen
           style={{ inlineSize: "40rem" }}
         />
@@ -532,12 +531,7 @@ export default function RegisteredDataTable() {
           style={{ inlineSize: "14rem" }}
           filterPlaceholder="Search by Mobile"
         />
-        <Column
-          field="email"
-          header="Email"
-          filter
-          style={{ inlineSize: "14rem" }}
-        />
+        <Column field="email" header="Email" style={{ inlineSize: "14rem" }} />
         <Column
           field="date"
           header="Application Submitted"
@@ -554,13 +548,11 @@ export default function RegisteredDataTable() {
         <Column
           field="currentStatus"
           header="Current Status"
-          filter
           style={{ inlineSize: "14rem" }}
         />
         <Column
           field="nextStatus"
           header="Next Status"
-          filter
           style={{ inlineSize: "14rem" }}
         />
         <Column

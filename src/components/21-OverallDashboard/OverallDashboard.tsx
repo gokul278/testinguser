@@ -102,7 +102,10 @@ const OverallDashboard: React.FC = () => {
           futureToday: data.data.signUpCount[0].count_other_days,
         });
 
-        if (localStorage.getItem("refUtId") === "11") {
+        if (
+          localStorage.getItem("refUtId") === "11" ||
+          localStorage.getItem("refUtId") === "7"
+        ) {
         } else {
           setTrialCount({
             today: data.data.trailCount[0].count_today,
@@ -112,6 +115,10 @@ const OverallDashboard: React.FC = () => {
 
         if (localStorage.getItem("refUtId") === "4") {
         } else {
+          console.log(
+            "---------><--------------",
+            data.data.registerCount[0].count_today
+          );
           setFormSubmitted({
             today: data.data.registerCount[0].count_today,
             futureToday: data.data.registerCount[0].count_other_days,
@@ -482,36 +489,40 @@ const OverallDashboard: React.FC = () => {
                         /> */}
                       </div>
                     </div>
-                    <ul className="list-none p-0 m-0">
-                      {overallUserStatus.map((element: any) => (
-                        <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                          <div>
-                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
-                              {element.user_type_label}
-                            </span>
-                            <div className="mt-1 text-600">
-                              Count : {element.count}
+                    {overallUserStatus.length ? (
+                      <ul className="list-none p-0 m-0">
+                        {overallUserStatus.map((element: any) => (
+                          <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                            <div>
+                              <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
+                                {element.user_type_label}
+                              </span>
+                              <div className="mt-1 text-600">
+                                Count : {element.count}
+                              </div>
                             </div>
-                          </div>
-                          <div className="mt-2 md:mt-0 flex align-items-center">
-                            <div
-                              className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                              style={{ blockSize: "8px" }}
-                            >
+                            <div className="mt-2 md:mt-0 flex align-items-center">
                               <div
-                                className="bg-orange-500 h-full"
-                                style={{
-                                  inlineSize: element.percentage + "%",
-                                }}
-                              />
+                                className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                                style={{ blockSize: "8px" }}
+                              >
+                                <div
+                                  className="bg-orange-500 h-full"
+                                  style={{
+                                    inlineSize: element.percentage + "%",
+                                  }}
+                                />
+                              </div>
+                              <span className="text-orange-500 ml-3 font-medium">
+                                {element.percentage} %
+                              </span>
                             </div>
-                            <span className="text-orange-500 ml-3 font-medium">
-                              {element.percentage} %
-                            </span>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No Data</p>
+                    )}
                   </div>
 
                   {localStorage.getItem("refUtId") === "4" ? (
@@ -710,36 +721,40 @@ const OverallDashboard: React.FC = () => {
                         /> */}
                         </div>
                       </div>
-                      <ul className="list-none p-0 m-0">
-                        {overallEmployeeStatus.map((element: any) => (
-                          <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                            <div>
-                              <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
-                                {element.user_type_label}
-                              </span>
-                              <div className="mt-1 text-600">
-                                Count : {element.count}
+                      {overallEmployeeStatus.length ? (
+                        <ul className="list-none p-0 m-0">
+                          {overallEmployeeStatus.map((element: any) => (
+                            <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                              <div>
+                                <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
+                                  {element.user_type_label}
+                                </span>
+                                <div className="mt-1 text-600">
+                                  Count : {element.count}
+                                </div>
                               </div>
-                            </div>
-                            <div className="mt-2 md:mt-0 flex align-items-center">
-                              <div
-                                className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                style={{ blockSize: "8px" }}
-                              >
+                              <div className="mt-2 md:mt-0 flex align-items-center">
                                 <div
-                                  className="bg-orange-500 h-full"
-                                  style={{
-                                    inlineSize: element.percentage + "%",
-                                  }}
-                                />
+                                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                                  style={{ blockSize: "8px" }}
+                                >
+                                  <div
+                                    className="bg-orange-500 h-full"
+                                    style={{
+                                      inlineSize: element.percentage + "%",
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-orange-500 ml-3 font-medium">
+                                  {element.percentage} %
+                                </span>
                               </div>
-                              <span className="text-orange-500 ml-3 font-medium">
-                                {element.percentage} %
-                              </span>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>No Data</p>
+                      )}
                     </div>
                   )}
                   <div className="card">

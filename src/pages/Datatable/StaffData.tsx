@@ -76,7 +76,7 @@ export default function StaffDatas() {
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
 
   console.log(UserDetailss, userDetails);
-  
+
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   // Filters state
@@ -285,7 +285,6 @@ export default function StaffDatas() {
           header="User ID"
           frozen
           body={userIdTemplate}
-          filter
           sortable
           filterPlaceholder="Search by name"
           style={{ inlineSize: "14rem" }}
@@ -293,14 +292,12 @@ export default function StaffDatas() {
         <Column
           field="fname"
           header="Name"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />
         <Column
           field="trial"
           header="User Status"
-          filter
           sortable
           style={{ inlineSize: "14rem", textTransform: "capitalize" }}
         />
@@ -314,7 +311,6 @@ export default function StaffDatas() {
         <Column
           field="email"
           header="Email"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />

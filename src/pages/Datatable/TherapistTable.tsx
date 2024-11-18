@@ -94,7 +94,7 @@ export default function TherapistTable() {
   const [userDetails, setUserDetails] = useState<Customer | null>(null);
   const [UserDetailss, setUserDetailss] = useState<UserDetails[]>([]);
 
-  console.log("testing", UserDetailss, userDetails)
+  console.log("testing", UserDetailss, userDetails);
   const [therapyStatus, setTherapyStatus] = useState<{
     [key: string]: boolean;
   }>({});
@@ -424,14 +424,12 @@ export default function TherapistTable() {
           field="userId"
           header="Customer Id"
           body={userIdTemplate}
-          filter
           frozen
           style={{ inlineSize: "18rem" }}
         />
         <Column
           field="fname"
           header="Name"
-          filter
           frozen
           style={{ inlineSize: "18rem" }}
         />

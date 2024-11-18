@@ -28,6 +28,7 @@ import Notifications from "./components/37-Notifications/Notifications";
 import { Logout } from "./pages/Logout/Logout";
 import Settings from "./components/08-Settings/Settings";
 import StaffFeedback from "./components/38-Feedback/Feedback";
+import AddNotes from "./components/39-AddNotes/AddNotes";
 const App = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("JWTtoken");
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="/users/profile" element={<Profile />} />
           <Route path="users/support" element={<Support />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/yoganotes" element={<AddNotes />} />
 
           <Route path="/settings" element={<Settings />} />
 

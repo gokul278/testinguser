@@ -348,7 +348,6 @@ export default function Datatables() {
         <Column
           field="fname"
           header="Name"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />

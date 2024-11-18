@@ -595,7 +595,6 @@ export default function Notify(selectedType: any) {
           header="User ID"
           body={userIdTemplate}
           frozen
-          filter
           sortable
           filterPlaceholder="Search by User ID"
           style={{ inlineSize: "14rem" }}
@@ -603,14 +602,12 @@ export default function Notify(selectedType: any) {
         <Column
           field="fname"
           header="Name"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />
         <Column
           field="changedby"
           header="Changed By"
-          filter
           sortable
           style={{ inlineSize: "14rem", textTransform: "capitalize" }}
         />
@@ -618,7 +615,6 @@ export default function Notify(selectedType: any) {
         <Column
           field="branch"
           header="Branch"
-          filter
           sortable
           style={{ inlineSize: "14rem", textTransform: "capitalize" }}
         />
@@ -626,7 +622,6 @@ export default function Notify(selectedType: any) {
         <Column
           field="transactioncount"
           header="Transaction Count"
-          filter
           sortable
           style={{ inlineSize: "14rem", textTransform: "capitalize" }}
         />
@@ -640,7 +635,6 @@ export default function Notify(selectedType: any) {
         <Column
           field="requesttime"
           header="Request Time"
-          filter
           sortable
           style={{ inlineSize: "14rem" }}
         />
