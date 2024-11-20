@@ -338,9 +338,7 @@ const Transactions: React.FC = () => {
             </div>{" "}
           </div>
           <div className=" px-5 bg-[#f6f5f5] h-[85vh]">
-            <h2>Student Details</h2>
-
-            <div className="card" style={{ overflow: "auto" }}>
+            <div className="card" style={{ overflow: "auto",marginTop:"10px" }}>
               <DataTable
                 paginator
                 rows={10}

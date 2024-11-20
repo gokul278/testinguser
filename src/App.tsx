@@ -29,6 +29,7 @@ import { Logout } from "./pages/Logout/Logout";
 import Settings from "./components/08-Settings/Settings";
 import StaffFeedback from "./components/38-Feedback/Feedback";
 import AddNotes from "./components/39-AddNotes/AddNotes";
+import AssignNotes from "./components/40-AssignNotes/AssignNotes";
 const App = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("JWTtoken");
@@ -68,6 +69,7 @@ const App = () => {
           <Route path="/staff/users" element={<UsersDir />} />
           <Route path="/dir/staff" element={<StaffData />} />
           <Route path="/dir/notify" element={<Notifications />} />
+          <Route path="/assignnotes" element={<AssignNotes />} />
 
           <Route path="/staff/signedupUsers" element={<Users />} />
           <Route path="/dir/organization" element={<Organization />} />

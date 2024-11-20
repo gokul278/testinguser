@@ -151,7 +151,7 @@ const Settings: React.FC = () => {
                 }}
               >
                 <div className="text-[20px] font-bold font-serif">
-                  Fees Structure
+                  Fee Structure
                 </div>
                 <div className="text-[#f95005] text-[40px] text-end">
                   <FaMoneyCheckDollar />
@@ -180,7 +180,7 @@ const Settings: React.FC = () => {
         position="right"
         onHide={() => setFeesStructure(false)}
       >
-        <h2>Fees Structure</h2>
+        <h2>Fee Structure</h2>
         <FeesStructure />
       </Sidebar>
 

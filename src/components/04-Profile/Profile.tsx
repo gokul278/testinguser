@@ -13,6 +13,8 @@ import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
 import PasswordInput from "../../pages/Inputs/PasswordInput";
 import ErrorMessage from "../../pages/Messages/ErrorMessage";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface HealthProblemData {
   presentHealthProblem: Record<string, string>;
@@ -572,7 +574,9 @@ const Profile: React.FC = () => {
           refStSex: inputs.gender,
           refguardian: inputs.guardianname,
           refMaritalStatus: inputs.maritalstatus,
-          refWeddingDate: inputs.anniversarydate ? inputs.anniversarydate : "",
+          refWeddingDate: inputs.anniversarydate
+            ? inputs.anniversarydate
+            : null,
         },
       },
       {
@@ -827,8 +831,12 @@ const Profile: React.FC = () => {
     }));
   };
 
+  const [uploadloading, setUploadLoading] = useState(false);
+
   const handleDocument = (e: any) => {
     e.preventDefault();
+
+    setUploadLoading(true);
 
     // Initialize FormData
     const formData = new FormData();
@@ -858,6 +866,21 @@ const Profile: React.FC = () => {
         console.log(data);
 
         if (data.success) {
+          toast.success(
+            "Document Uploaded Successfully, Waiting for Approval",
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            }
+          );
+          setUploadLoading(false);
           setInputs({
             ...inputs,
             pancard: data.profileFile.employeeDocuments.panCard
@@ -1060,6 +1083,7 @@ const Profile: React.FC = () => {
 
           <div className="userProfilePage">
             {/* Personal Information */}
+            <ToastContainer />
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -2362,13 +2386,42 @@ const Profile: React.FC = () => {
                     inputs.aadhar &&
                     inputs.certification ? null : (
                       <div className="w-[100%] flex justify-start">
-                        <button
-                          className="text-[18px] outline-none py-2 border-none px-5 bg-[#f95005] font-bold cursor-pointer text-white rounded"
-                          type="submit"
-                        >
-                          Upload&nbsp;&nbsp;
-                          <i className="text-[18px] pi pi-file-arrow-up"></i>
-                        </button>
+                        {uploadloading ? (
+                          <div>
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-labelledby="title-04a desc-04a"
+                              aria-live="polite"
+                              aria-busy="true"
+                              className="w-10 h-10 animate animate-spin"
+                            >
+                              <title id="title-04a">Icon title</title>
+                              <desc id="desc-04a">Some desc</desc>
+                              <circle
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                className="stroke-slate-200"
+                                stroke-width="4"
+                              />
+                              <path
+                                d="M12 22C14.6522 22 17.1957 20.9464 19.0711 19.0711C20.9464 17.1957 22 14.6522 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2"
+                                className="stroke-[#ff5000]"
+                                stroke-width="4"
+                              />
+                            </svg>
+                          </div>
+                        ) : (
+                          <button
+                            className="text-[18px] outline-none py-2 border-none px-5 bg-[#f95005] font-bold cursor-pointer text-white rounded"
+                            type="submit"
+                          >
+                            Upload&nbsp;&nbsp;
+                            <i className="text-[18px] pi pi-file-arrow-up"></i>
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -2377,7 +2430,7 @@ const Profile: React.FC = () => {
                 <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
                   <div className="w-[100%] flex justify-between items-center mb-5">
                     <div className="text-[1rem] lg:text-[25px] font-bold">
-                      Professtional Exprience
+                      Professional Exprience
                     </div>
                     {edits.prof ? (
                       <div

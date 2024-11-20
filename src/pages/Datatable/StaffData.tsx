@@ -39,9 +39,13 @@ interface UserDetails {
   rating: number;
 }
 
+interface StaffDatasProps {
+  changes: boolean; // Define the type of `changes` prop
+}
+
 type DecryptResult = any;
 
-export default function StaffDatas() {
+const StaffDatas: React.FC<StaffDatasProps> = ({ changes }) => {
   const decrypt = (
     encryptedData: string,
     iv: string,
@@ -127,7 +131,7 @@ export default function StaffDatas() {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [changes]);
 
   const onGlobalFilterChange = (e: any) => {
     const value = e.target.value;
@@ -326,4 +330,6 @@ export default function StaffDatas() {
       </Sidebar>
     </div>
   );
-}
+};
+
+export default StaffDatas;

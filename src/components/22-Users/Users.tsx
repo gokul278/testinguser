@@ -86,7 +86,7 @@ const Users: React.FC = () => {
         <>
           <div className="bg-[#f6f5f5]">
             <div className="headerPrimary">
-              <h3>SIGNED UP USER DATA</h3>
+              <h3>FUTURE CLIENTS</h3>
               <div className="quickAcces">
                 <Skeleton
                   shape="circle"
@@ -114,7 +114,7 @@ const Users: React.FC = () => {
       ) : (
         <div className="usersTable">
           <div className="headerPrimary">
-            <h3>SIGNED UP USER DATA</h3>
+            <h3>FUTURE CLIENTS</h3>
             <div className="quickAcces">
               {userdata.profileimg ? (
                 <div className="p-link layout-topbar-button">

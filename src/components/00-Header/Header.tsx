@@ -174,12 +174,12 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     {
       path: "/staff/registeredUsers",
-      name: "Form Submitted",
+      name: "Trial & Fee Due",
       icon: <HiOutlineUsers />,
     },
     {
       path: "/staff/signedupUsers",
-      name: "Signed Up (Client)",
+      name: "Future Clients",
       icon: <HiOutlineUserGroup />,
     },
     {
@@ -214,12 +214,12 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     {
       path: "/staff/registeredUsers",
-      name: "Form Submitted",
+      name: "Trial & Fee Due",
       icon: <HiOutlineUsers />,
     },
     {
       path: "/staff/signedupUsers",
-      name: "Signed Up (Client)",
+      name: "Future Clients",
       icon: <HiOutlineUserGroup />,
     },
 
@@ -329,12 +329,12 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     // {
     //   path: "/staff/registeredUsers",
-    //   name: "Form Submitted Users",
+    //   name: "Trial & Fee Due Users",
     //   icon: <HiOutlineUsers />,
     // },
     // {
     //   path: "/staff/signedupUsers",
-    //   name: "Signed Up (Client)",
+    //   name: "Future Clients",
     //   icon: <HiOutlineUserGroup />,
     // },
     {
@@ -389,7 +389,6 @@ const Header: React.FC<{ children: ReactNode }> = ({ children }) => {
   ];
 
   useEffect(() => {
-    console.log("Ref ut id", utId);
 
     const parsedUtId = utId ? parseInt(utId, 10) : null;
 

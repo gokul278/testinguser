@@ -8,6 +8,7 @@ import Notify from "../../pages/Datatable/Notify";
 import { Dropdown } from "primereact/dropdown";
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
+import { useLocation } from "react-router-dom";
 
 interface SelectType {
   name: string;
@@ -17,6 +18,12 @@ interface SelectType {
 type DecryptResult = any;
 
 const Notifications: React.FC = () => {
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+
+  const user = searchParams.get("user");
+
   const [pageLoading, setPageLoading] = useState({
     verifytoken: true,
     pageData: true,
@@ -81,6 +88,13 @@ const Notifications: React.FC = () => {
         verifytoken: false,
       });
 
+      if (user) {
+        if (user === "staff") {
+          setSelectedType(SelectTypeOption[1].code);
+          
+        }
+      }
+
       console.log("Verify Token  Running --- ");
     });
   }, []);
@@ -91,6 +105,8 @@ const Notifications: React.FC = () => {
   ];
 
   const [selectedType, setSelectedType] = useState(SelectTypeOption[0].code);
+
+  
 
   return (
     <>

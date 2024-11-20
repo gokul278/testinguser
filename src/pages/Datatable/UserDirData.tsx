@@ -46,7 +46,7 @@ interface UserDetails {
 
 type DecryptResult = any;
 
-export default function UserDirData() {
+const UserDirData: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomers, setSelectedCustomers] = useState<Customer[]>([]);
   const [visibleLeft, setVisibleLeft] = useState(false);
@@ -161,6 +161,10 @@ export default function UserDirData() {
 
       setUserDetails(userDetails);
       setUserDetailss(userData);
+
+
+      console.log("Testing Data---------------",data);
+      
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -403,4 +407,6 @@ export default function UserDirData() {
       </Sidebar>
     </div>
   );
-}
+};
+
+export default UserDirData;

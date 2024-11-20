@@ -234,7 +234,7 @@ const PrintPDF: React.FC<PrintPDFProps> = ({ refOrderId, closePayment }) => {
                     fontWeight: 600,
                   }}
                 >
-                  Email: ublisyogafunds@gmail.com
+                  Email: helpdesk.rajakilpakkam@ublisyoga.com
                 </Text>
               </View>
             </View>

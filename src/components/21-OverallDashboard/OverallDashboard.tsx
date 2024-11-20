@@ -12,6 +12,8 @@ import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
 
+import { AiOutlineAudit } from "react-icons/ai";
+
 type DecryptResult = any;
 
 const lineData = {
@@ -50,6 +52,16 @@ const OverallDashboard: React.FC = () => {
   const [overallUserStatus, setOverallUserStatus] = useState([]);
 
   const [overallEmployeeStatus, setOverallEmployeeStatus] = useState([]);
+
+  const [studentaudit, setStudentAudit] = useState({
+    approvalCount: 0,
+    readCount: 0,
+  });
+
+  const [employeeAudit, setEmployeeAudit] = useState({
+    approvalCount: 0,
+    readCount: 0,
+  });
 
   const lineOptions = {
     plugins: {
@@ -95,37 +107,43 @@ const OverallDashboard: React.FC = () => {
           import.meta.env.VITE_ENCRYPTION_KEY
         );
 
-        console.log("API Response: ", data);
-
         setFutureClient({
           today: data.data.signUpCount[0].count_today,
           futureToday: data.data.signUpCount[0].count_other_days,
         });
 
         if (
-          localStorage.getItem("refUtId") === "11" ||
-          localStorage.getItem("refUtId") === "7"
+          localStorage.getItem("refUtId") === "7" ||
+          localStorage.getItem("refUtId") === "4"
         ) {
-        } else {
           setTrialCount({
             today: data.data.trailCount[0].count_today,
             futureToday: data.data.trailCount[0].count_other_days,
           });
         }
 
+        if (localStorage.getItem("refUtId") === "7") {
+          setStudentAudit({
+            approvalCount:
+              data.data.getStudentChangesCountResult[0].ApproveCount,
+            readCount: data.data.getStudentChangesCountResult[0].Student_Read,
+          });
+
+          setEmployeeAudit({
+            approvalCount:
+              data.data.getEmployeeChangesCountResult[0].ApproveCount,
+            readCount: data.data.getEmployeeChangesCountResult[0].Employee_Read,
+          });
+        }
+
         if (localStorage.getItem("refUtId") === "4") {
         } else {
-          console.log(
-            "---------><--------------",
-            data.data.registerCount[0].count_today
-          );
           setFormSubmitted({
             today: data.data.registerCount[0].count_today,
             futureToday: data.data.registerCount[0].count_other_days,
           });
 
           const recentData = data.data.registerSampleData;
-          console.log("recentData", recentData);
           const mappedData = recentData.map((item: any, index: any) => ({
             sno: index + 1,
             name: `${item.refStFName} ${item.refStLName}`,
@@ -134,7 +152,6 @@ const OverallDashboard: React.FC = () => {
           setProducts(mappedData);
 
           const trailSampleData = data.data.trailSampleData;
-          console.log("trailSampleData", trailSampleData);
           const trailSampleDatamappedData = trailSampleData.map(
             (item: any, index: any) => ({
               sno: index + 1,
@@ -144,13 +161,7 @@ const OverallDashboard: React.FC = () => {
           );
           setTrailSampleData(trailSampleDatamappedData);
 
-          console.log(
-            "trailSampleDatamappedData ---------------",
-            trailSampleDatamappedData
-          );
-
           const paymentPendingSampleData = data.data.paymentPendingSampleData;
-          console.log("paymentPendingSampleData", paymentPendingSampleData);
           const paymentPendingSampleDatamappedData =
             paymentPendingSampleData.map((item: any, index: any) => ({
               sno: index + 1,
@@ -163,7 +174,6 @@ const OverallDashboard: React.FC = () => {
         setOverallUserStatus(data.data.userTypeCount);
 
         setOverallEmployeeStatus(data.data.staffCount);
-        console.log(overallEmployeeStatus);
       });
   }, []);
 
@@ -218,7 +228,6 @@ const OverallDashboard: React.FC = () => {
       );
 
       localStorage.setItem("JWTtoken", "Bearer " + data.token + "");
-
       setuserdata({
         username:
           "" + data.data[0].refStFName + " " + data.data[0].refStLName + "",
@@ -230,8 +239,6 @@ const OverallDashboard: React.FC = () => {
         ...pageLoading,
         verifytoken: false,
       });
-
-      console.log("Verify Token  Running --- ");
     });
   }, []);
 
@@ -305,7 +312,7 @@ const OverallDashboard: React.FC = () => {
                 <div className="cardOutline card">
                   <div className="header">
                     <i className="pi pi-user-plus"></i>
-                    <h3>Form Submitted</h3>
+                    <h3>Therapist Users</h3>
                   </div>
                   <div className="counts">
                     <div className="countOne">
@@ -397,6 +404,41 @@ const OverallDashboard: React.FC = () => {
               </div>
             </Link>
 
+            {localStorage.getItem("refUtId") === "7" ? (
+              <Link
+                to="/dir/notify?user=student"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div className="cardOutline card">
+                  <div className="header">
+                    <AiOutlineAudit />
+                    <h3>Student Aduit</h3>
+                  </div>
+                  <div className="counts">
+                    <div className="countOne">
+                      <h3>{studentaudit.approvalCount}</h3>
+                      <h5>Approval</h5>
+                    </div>
+                    <div className="w-full md:w-2">
+                      <Divider
+                        layout="vertical"
+                        className="hidden md:flex"
+                      ></Divider>
+                      <Divider
+                        layout="horizontal"
+                        className="flex md:hidden"
+                        align="center"
+                      ></Divider>
+                    </div>
+                    <div className="countOne">
+                      <h3>{studentaudit.readCount}</h3>
+                      <h5>Actions</h5>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ) : null}
+
             {/* <div className="cardOutline card">
               <div className="header">
                 <i className="pi pi-calendar"></i>
@@ -459,6 +501,43 @@ const OverallDashboard: React.FC = () => {
             </Link> */}
           </div>
 
+          <div className="cardTesting">
+            {localStorage.getItem("refUtId") === "7" ? (
+              <Link
+                to="/dir/notify?user=staff"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div className="cardOutline card">
+                  <div className="header">
+                    <AiOutlineAudit />
+                    <h3>Employee Aduit</h3>
+                  </div>
+                  <div className="counts">
+                    <div className="countOne">
+                      <h3>{employeeAudit.approvalCount}</h3>
+                      <h5>Approval</h5>
+                    </div>
+                    <div className="w-full md:w-2">
+                      <Divider
+                        layout="vertical"
+                        className="hidden md:flex"
+                      ></Divider>
+                      <Divider
+                        layout="horizontal"
+                        className="flex md:hidden"
+                        align="center"
+                      ></Divider>
+                    </div>
+                    <div className="countOne">
+                      <h3>{employeeAudit.readCount}</h3>
+                      <h5>Actions</h5>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ) : null}
+          </div>
+
           <div className="overallComponent mt-3" style={{ inlineSize: "100%" }}>
             <div className="dashboardContxt">
               <div
@@ -491,34 +570,39 @@ const OverallDashboard: React.FC = () => {
                     </div>
                     {overallUserStatus.length ? (
                       <ul className="list-none p-0 m-0">
-                        {overallUserStatus.map((element: any) => (
-                          <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                            <div>
-                              <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
-                                {element.user_type_label}
-                              </span>
-                              <div className="mt-1 text-600">
-                                Count : {element.count}
+                        {overallUserStatus.map(
+                          (element: any, index: number) => (
+                            <li
+                              key={index}
+                              className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4"
+                            >
+                              <div>
+                                <span className="text-900 font-medium mr-2 mb-1 md:mb-0 capitalize">
+                                  {element.user_type_label}
+                                </span>
+                                <div className="mt-1 text-600">
+                                  Count : {element.count}
+                                </div>
                               </div>
-                            </div>
-                            <div className="mt-2 md:mt-0 flex align-items-center">
-                              <div
-                                className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                style={{ blockSize: "8px" }}
-                              >
+                              <div className="mt-2 md:mt-0 flex align-items-center">
                                 <div
-                                  className="bg-orange-500 h-full"
-                                  style={{
-                                    inlineSize: element.percentage + "%",
-                                  }}
-                                />
+                                  className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                                  style={{ blockSize: "8px" }}
+                                >
+                                  <div
+                                    className="bg-orange-500 h-full"
+                                    style={{
+                                      inlineSize: element.percentage + "%",
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-orange-500 ml-3 font-medium">
+                                  {element.percentage} %
+                                </span>
                               </div>
-                              <span className="text-orange-500 ml-3 font-medium">
-                                {element.percentage} %
-                              </span>
-                            </div>
-                          </li>
-                        ))}
+                            </li>
+                          )
+                        )}
                       </ul>
                     ) : (
                       <p>No Data</p>
@@ -535,7 +619,7 @@ const OverallDashboard: React.FC = () => {
                       >
                         <div className="card">
                           <h3 className="text-[#f95005]">
-                            Today Form Submitted Clients
+                            Today's Form Submissions
                           </h3>
                           <DataTable
                             value={products}
@@ -571,7 +655,7 @@ const OverallDashboard: React.FC = () => {
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
                       <div className="card">
-                        <h3 className="text-[#f95005]">Trail Students</h3>
+                        <h3 className="text-[#f95005]">Students on Trial</h3>
                         <DataTable
                           value={trialSampleData}
                           rows={5}
@@ -768,9 +852,7 @@ const OverallDashboard: React.FC = () => {
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
                       <div className="card">
-                        <h3 className="text-[#f95005]">
-                          Payment Pending Students
-                        </h3>
+                        <h3 className="text-[#f95005]">Fee Payment Dues</h3>
                         <DataTable
                           value={paymentSampleData}
                           rows={5}

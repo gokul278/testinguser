@@ -115,7 +115,7 @@ const Organization: React.FC = () => {
         <>
           <div className="bg-[#f6f5f5]">
             <div className="headerPrimary">
-              <h3>USER AUDIT PAGE</h3>
+              <h3>ORGANIZATION CHART</h3>
               <div className="quickAcces">
                 <Skeleton
                   shape="circle"
@@ -143,7 +143,7 @@ const Organization: React.FC = () => {
       ) : (
         <div>
           <div className="headerPrimary">
-            <h3>USER AUDIT PAGE</h3>
+            <h3>ORGANIZATION CHART</h3>
             <div className="quickAcces">
               {userdata.profileimg ? (
                 <div className="p-link layout-topbar-button">

@@ -8,12 +8,9 @@ import Axios from "axios";
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
 
-
-
 type DecryptResult = any;
 
 const UsersDir: React.FC = () => {
-
   const [pageLoading, setPageLoading] = useState({
     verifytoken: true,
     pageData: true,
@@ -78,9 +75,6 @@ const UsersDir: React.FC = () => {
         verifytoken: false,
       });
 
-      console.log(data);
-
-      console.log("Verify Token  Running --- ");
     });
   }, []);
 

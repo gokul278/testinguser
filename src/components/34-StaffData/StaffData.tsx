@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
-import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
+// import { MultiSelect, MultiSelectChangeEvent } from "primereact/multiselect";
 import StaffDatas from "../../pages/Datatable/StaffData";
 import { Sidebar } from "primereact/sidebar";
 import { InputText } from "primereact/inputtext";
@@ -10,12 +10,13 @@ import { Dropdown } from "primereact/dropdown";
 import axios from "axios"; // Import axios for API calls
 import { Skeleton } from "primereact/skeleton";
 import CryptoJS from "crypto-js";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-interface City {
-  name: string;
-  code: string;
-}
-
+// interface City {
+//   name: string;
+//   code: string;
+// }
 type DecryptResult = any;
 
 const StaffData: React.FC = () => {
@@ -89,7 +90,7 @@ const StaffData: React.FC = () => {
       });
   }, []);
 
-  const [selectedCities, setSelectedCities] = useState<City[]>([]);
+  // const [selectedCities, setSelectedCities] = useState<City[]>([]);
   const [visibleRight, setVisibleRight] = useState<boolean>(false); // Sidebar visibility state
   const [staffName, setStaffName] = useState<string>(""); // State for staff name
   const [staffRole, setStaffRole] = useState<string>(""); // State for staff role
@@ -156,25 +157,27 @@ const StaffData: React.FC = () => {
     fetchUserTypeLabel();
   }, []);
 
-  const cities: City[] = [
-    { name: "All", code: "LDN" },
-    { name: "Front Office", code: "NY" },
-    { name: "Instructor", code: "RM" },
-    { name: "Finance", code: "IST" },
-  ];
+  // const cities: City[] = [
+  //   { name: "All", code: "LDN" },
+  //   { name: "Front Office", code: "NY" },
+  //   { name: "Instructor", code: "RM" },
+  //   { name: "Finance", code: "IST" },
+  // ];
 
-  const handlePlusButtonClick = async () => {
-    try {
-      // const response = await axios.get(
-      //   import.meta.env.VITE_API_URL + `/director/userTypeLabel`
-      // );
-      // console.log("response", response);
-      // setUserTypes(response.data);
-      setVisibleRight(true);
-    } catch (error) {
-      console.error("Error fetching user types:", error);
-    }
-  };
+  // const handlePlusButtonClick = async () => {
+  //   try {
+  //     // const response = await axios.get(
+  //     //   import.meta.env.VITE_API_URL + `/director/userTypeLabel`
+  //     // );
+  //     // console.log("response", response);
+  //     // setUserTypes(response.data);
+  //     setVisibleRight(true);
+  //   } catch (error) {
+  //     console.error("Error fetching user types:", error);
+  //   }
+  // };
+
+  const [changes,setChnages] = useState(false);
 
   const handleAddStaff = async () => {
     try {
@@ -220,6 +223,22 @@ const StaffData: React.FC = () => {
       setMobile("");
       setPanCard("");
       setAadharCard("");
+
+      setChnages(!changes)
+
+      toast.success("New Staff Added", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        // transition: Bounce,
+      });
+
+      fetchUserTypeLabel();
     } catch (error) {
       console.error("Error adding staff:", error);
     }
@@ -258,6 +277,7 @@ const StaffData: React.FC = () => {
         </>
       ) : (
         <div className="usersTable">
+          <ToastContainer />
           <div className="headerPrimary">
             <h3>STAFF DETAILS</h3>
             <div className="quickAcces">
@@ -287,44 +307,19 @@ const StaffData: React.FC = () => {
           <div className="routesCont">
             <div className="routeContents">
               <div className="filterHeaders">
-                <div className="card filterContents w-full md:w-12/12 mx-auto">
-                  <div
-                    className="filter w-full md:w-3/12 mx-auto"
-                    style={{ alignItems: "start", justifyContent: "start" }}
-                  >
-                    <MultiSelect
-                      value={selectedCities}
-                      onChange={(e: MultiSelectChangeEvent) =>
-                        setSelectedCities(e.value)
-                      }
-                      options={cities}
-                      optionLabel="name"
-                      filter
-                      placeholder="Select Options"
-                      maxSelectedLabels={3}
-                      className="w-16rem mt-3"
-                    />
-                  </div>
-
-                  <div
-                    className="filter w-full md:w-3/12 mx-auto"
-                    style={{ alignItems: "end", justifyContent: "end" }}
-                  >
-                    <p className="pr-5">Clear Filter</p>
-                    <p className="pr-5">Apply Filter</p>
-                    <Button
-                      icon="pi pi-plus"
-                      rounded
-                      severity="success"
-                      aria-label="Add Staff"
-                      onClick={handlePlusButtonClick}
-                    />
-                  </div>
+                <div className="flex justify-end">
+                  <Button
+                    severity="success"
+                    label="Add New Staff"
+                    onClick={() => {
+                      setVisibleRight(true);
+                    }}
+                  />
                 </div>
               </div>
               <Divider />
 
-              <StaffDatas />
+              <StaffDatas changes={changes} />
             </div>
           </div>
 

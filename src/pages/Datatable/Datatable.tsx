@@ -213,7 +213,7 @@ export default function Datatables() {
       <Dropdown
         value={"" + rowData.status1 + ""}
         options={statusOptions}
-        style={{ textTransform: "capitalize" }}
+        style={{ textTransform: "capitalize", width:"190px" }}
         onChange={(e) => handleStatusChange(e.value, rowData.id)}
         placeholder="Select Status"
       />
@@ -223,6 +223,7 @@ export default function Datatables() {
   const actionBodyTemplateStatus2 = (rowData: Customer) => {
     return (
       <Dropdown
+      style={{ textTransform: "capitalize", width:"190px" }}
         value={"" + rowData.status2 + ""}
         options={followUpOptions}
         onChange={(e) => handleFollowUpChange(e.value, rowData.id)}
