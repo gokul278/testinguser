@@ -2203,292 +2203,305 @@ const Profile: React.FC = () => {
               </>
             ) : (
               <>
-                <form onSubmit={handleDocument}>
-                  <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
-                    <div className="w-[100%] flex justify-between items-center mb-5">
-                      <div className="text-[1rem] lg:text-[25px] font-bold">
-                        Documentation
-                      </div>
-                    </div>
-                    <div className="w-[100%] flex flex-col justify-center items-center">
-                      <div className="w-[100%] flex flex-col lg:flex-row gap-3 justify-between mb-[20px]">
-                        <div className="w-[100%] lg:w-[30%]">
-                          <div className="w-[100%] flex flex-col gap-1">
-                            <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                              Aadhaar Card *
-                            </label>
-                            {inputs.aadhar ? (
-                              <Button
-                                type="button"
-                                severity="success"
-                                onClick={() => {
-                                  // Assuming `content` is your base64 string for the PDF file
-                                  const content = inputs.aadhar.content;
-                                  const filename = "AadhaarCard.pdf";
+                {localStorage.getItem("refUtId") === "7" ? (
+                  <></>
+                ) : (
+                  <>
+                    <form onSubmit={handleDocument}>
+                      <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+                        <div className="w-[100%] flex justify-between items-center mb-5">
+                          <div className="text-[1rem] lg:text-[25px] font-bold">
+                            Documentation
+                          </div>
+                        </div>
+                        <div className="w-[100%] flex flex-col justify-center items-center">
+                          <div className="w-[100%] flex flex-col lg:flex-row gap-3 justify-between mb-[20px]">
+                            <div className="w-[100%] lg:w-[30%]">
+                              <div className="w-[100%] flex flex-col gap-1">
+                                <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                  Aadhaar Card *
+                                </label>
+                                {inputs.aadhar ? (
+                                  <Button
+                                    type="button"
+                                    severity="success"
+                                    onClick={() => {
+                                      // Assuming `content` is your base64 string for the PDF file
+                                      const content = inputs.aadhar.content;
+                                      const filename = "AadhaarCard.pdf";
 
-                                  // Decode base64 to binary and create a Blob
-                                  const byteCharacters = atob(content);
-                                  const byteNumbers = new Array(
-                                    byteCharacters.length
-                                  );
-                                  for (
-                                    let i = 0;
-                                    i < byteCharacters.length;
-                                    i++
-                                  ) {
-                                    byteNumbers[i] =
-                                      byteCharacters.charCodeAt(i);
-                                  }
-                                  const byteArray = new Uint8Array(byteNumbers);
-                                  const blob = new Blob([byteArray], {
-                                    type: "application/pdf",
-                                  });
+                                      // Decode base64 to binary and create a Blob
+                                      const byteCharacters = atob(content);
+                                      const byteNumbers = new Array(
+                                        byteCharacters.length
+                                      );
+                                      for (
+                                        let i = 0;
+                                        i < byteCharacters.length;
+                                        i++
+                                      ) {
+                                        byteNumbers[i] =
+                                          byteCharacters.charCodeAt(i);
+                                      }
+                                      const byteArray = new Uint8Array(
+                                        byteNumbers
+                                      );
+                                      const blob = new Blob([byteArray], {
+                                        type: "application/pdf",
+                                      });
 
-                                  // Create a download link and trigger it
-                                  const link = document.createElement("a");
-                                  link.href = URL.createObjectURL(blob);
-                                  link.download = filename;
-                                  link.click();
+                                      // Create a download link and trigger it
+                                      const link = document.createElement("a");
+                                      link.href = URL.createObjectURL(blob);
+                                      link.download = filename;
+                                      link.click();
 
-                                  // Release memory
-                                  URL.revokeObjectURL(link.href);
-                                }}
-                                label="Download"
-                              />
-                            ) : (
-                              <input
-                                id="aadhar"
-                                name="aadhar"
-                                type="file"
-                                accept="application/pdf"
-                                onChange={handleFileChange}
-                                className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
-                              />
-                            )}
+                                      // Release memory
+                                      URL.revokeObjectURL(link.href);
+                                    }}
+                                    label="Download"
+                                  />
+                                ) : (
+                                  <input
+                                    id="aadhar"
+                                    name="aadhar"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={handleFileChange}
+                                    className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
+                                  />
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="w-[100%] lg:w-[30%]">
+                              <div className="w-[100%] flex flex-col gap-1">
+                                <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                  Pan Card *
+                                </label>
+                                {inputs.pancard ? (
+                                  <Button
+                                    type="button"
+                                    severity="success"
+                                    onClick={() => {
+                                      // Assuming `content` is your base64 string for the PDF file
+                                      const content = inputs.pancard.content;
+                                      const filename = "PanCard.pdf";
+
+                                      // Decode base64 to binary and create a Blob
+                                      const byteCharacters = atob(content);
+                                      const byteNumbers = new Array(
+                                        byteCharacters.length
+                                      );
+                                      for (
+                                        let i = 0;
+                                        i < byteCharacters.length;
+                                        i++
+                                      ) {
+                                        byteNumbers[i] =
+                                          byteCharacters.charCodeAt(i);
+                                      }
+                                      const byteArray = new Uint8Array(
+                                        byteNumbers
+                                      );
+                                      const blob = new Blob([byteArray], {
+                                        type: "application/pdf",
+                                      });
+
+                                      // Create a download link and trigger it
+                                      const link = document.createElement("a");
+                                      link.href = URL.createObjectURL(blob);
+                                      link.download = filename;
+                                      link.click();
+
+                                      // Release memory
+                                      URL.revokeObjectURL(link.href);
+                                    }}
+                                    label="Download"
+                                  />
+                                ) : (
+                                  <input
+                                    id="pan"
+                                    name="pan"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={handleFileChange}
+                                    className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
+                                  />
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="w-[100%] lg:w-[30%]">
+                              <div className="w-[100%] flex flex-col gap-1">
+                                <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                  Certification *
+                                </label>
+                                {inputs.certification ? (
+                                  <Button
+                                    type="button"
+                                    severity="success"
+                                    onClick={() => {
+                                      // Assuming `content` is your base64 string for the PDF file
+                                      const content =
+                                        inputs.certification.content;
+                                      const filename = "Certification.pdf";
+
+                                      // Decode base64 to binary and create a Blob
+                                      const byteCharacters = atob(content);
+                                      const byteNumbers = new Array(
+                                        byteCharacters.length
+                                      );
+                                      for (
+                                        let i = 0;
+                                        i < byteCharacters.length;
+                                        i++
+                                      ) {
+                                        byteNumbers[i] =
+                                          byteCharacters.charCodeAt(i);
+                                      }
+                                      const byteArray = new Uint8Array(
+                                        byteNumbers
+                                      );
+                                      const blob = new Blob([byteArray], {
+                                        type: "application/pdf",
+                                      });
+
+                                      // Create a download link and trigger it
+                                      const link = document.createElement("a");
+                                      link.href = URL.createObjectURL(blob);
+                                      link.download = filename;
+                                      link.click();
+
+                                      // Release memory
+                                      URL.revokeObjectURL(link.href);
+                                    }}
+                                    label="Download"
+                                  />
+                                ) : (
+                                  <input
+                                    id="certifiction"
+                                    name="certifiction"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={handleFileChange}
+                                    className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
+                                  />
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="w-[100%] lg:w-[30%]">
-                          <div className="w-[100%] flex flex-col gap-1">
-                            <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                              Pan Card *
-                            </label>
-                            {inputs.pancard ? (
-                              <Button
-                                type="button"
-                                severity="success"
-                                onClick={() => {
-                                  // Assuming `content` is your base64 string for the PDF file
-                                  const content = inputs.pancard.content;
-                                  const filename = "PanCard.pdf";
-
-                                  // Decode base64 to binary and create a Blob
-                                  const byteCharacters = atob(content);
-                                  const byteNumbers = new Array(
-                                    byteCharacters.length
-                                  );
-                                  for (
-                                    let i = 0;
-                                    i < byteCharacters.length;
-                                    i++
-                                  ) {
-                                    byteNumbers[i] =
-                                      byteCharacters.charCodeAt(i);
-                                  }
-                                  const byteArray = new Uint8Array(byteNumbers);
-                                  const blob = new Blob([byteArray], {
-                                    type: "application/pdf",
-                                  });
-
-                                  // Create a download link and trigger it
-                                  const link = document.createElement("a");
-                                  link.href = URL.createObjectURL(blob);
-                                  link.download = filename;
-                                  link.click();
-
-                                  // Release memory
-                                  URL.revokeObjectURL(link.href);
-                                }}
-                                label="Download"
-                              />
+                        {inputs.pancard &&
+                        inputs.aadhar &&
+                        inputs.certification ? null : (
+                          <div className="w-[100%] flex justify-start">
+                            {uploadloading ? (
+                              <div>
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  aria-labelledby="title-04a desc-04a"
+                                  aria-live="polite"
+                                  aria-busy="true"
+                                  className="w-10 h-10 animate animate-spin"
+                                >
+                                  <title id="title-04a">Icon title</title>
+                                  <desc id="desc-04a">Some desc</desc>
+                                  <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    className="stroke-slate-200"
+                                    stroke-width="4"
+                                  />
+                                  <path
+                                    d="M12 22C14.6522 22 17.1957 20.9464 19.0711 19.0711C20.9464 17.1957 22 14.6522 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2"
+                                    className="stroke-[#ff5000]"
+                                    stroke-width="4"
+                                  />
+                                </svg>
+                              </div>
                             ) : (
-                              <input
-                                id="pan"
-                                name="pan"
-                                type="file"
-                                accept="application/pdf"
-                                onChange={handleFileChange}
-                                className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
-                              />
+                              <button
+                                className="text-[18px] outline-none py-2 border-none px-5 bg-[#f95005] font-bold cursor-pointer text-white rounded"
+                                type="submit"
+                              >
+                                Upload&nbsp;&nbsp;
+                                <i className="text-[18px] pi pi-file-arrow-up"></i>
+                              </button>
                             )}
                           </div>
-                        </div>
-
-                        <div className="w-[100%] lg:w-[30%]">
-                          <div className="w-[100%] flex flex-col gap-1">
-                            <label className="text-[14px] text-[#f95005] font-medium font-mont leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                              Certification *
-                            </label>
-                            {inputs.certification ? (
-                              <Button
-                                type="button"
-                                severity="success"
-                                onClick={() => {
-                                  // Assuming `content` is your base64 string for the PDF file
-                                  const content = inputs.certification.content;
-                                  const filename = "Certification.pdf";
-
-                                  // Decode base64 to binary and create a Blob
-                                  const byteCharacters = atob(content);
-                                  const byteNumbers = new Array(
-                                    byteCharacters.length
-                                  );
-                                  for (
-                                    let i = 0;
-                                    i < byteCharacters.length;
-                                    i++
-                                  ) {
-                                    byteNumbers[i] =
-                                      byteCharacters.charCodeAt(i);
-                                  }
-                                  const byteArray = new Uint8Array(byteNumbers);
-                                  const blob = new Blob([byteArray], {
-                                    type: "application/pdf",
-                                  });
-
-                                  // Create a download link and trigger it
-                                  const link = document.createElement("a");
-                                  link.href = URL.createObjectURL(blob);
-                                  link.download = filename;
-                                  link.click();
-
-                                  // Release memory
-                                  URL.revokeObjectURL(link.href);
-                                }}
-                                label="Download"
-                              />
-                            ) : (
-                              <input
-                                id="certifiction"
-                                name="certifiction"
-                                type="file"
-                                accept="application/pdf"
-                                onChange={handleFileChange}
-                                className="flex h-10 w-full rounded-md border-2 border-input border-[#b3b4b6] px-3 py-2 text-[14px] text-[#4c4c4e] file:border-0 file:bg-[#f95005] file:text-[#fff] file:text-[14px] file:font-bold file:rounded"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {inputs.pancard &&
-                    inputs.aadhar &&
-                    inputs.certification ? null : (
-                      <div className="w-[100%] flex justify-start">
-                        {uploadloading ? (
-                          <div>
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              aria-labelledby="title-04a desc-04a"
-                              aria-live="polite"
-                              aria-busy="true"
-                              className="w-10 h-10 animate animate-spin"
-                            >
-                              <title id="title-04a">Icon title</title>
-                              <desc id="desc-04a">Some desc</desc>
-                              <circle
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                className="stroke-slate-200"
-                                stroke-width="4"
-                              />
-                              <path
-                                d="M12 22C14.6522 22 17.1957 20.9464 19.0711 19.0711C20.9464 17.1957 22 14.6522 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2"
-                                className="stroke-[#ff5000]"
-                                stroke-width="4"
-                              />
-                            </svg>
-                          </div>
-                        ) : (
-                          <button
-                            className="text-[18px] outline-none py-2 border-none px-5 bg-[#f95005] font-bold cursor-pointer text-white rounded"
-                            type="submit"
-                          >
-                            Upload&nbsp;&nbsp;
-                            <i className="text-[18px] pi pi-file-arrow-up"></i>
-                          </button>
                         )}
                       </div>
-                    )}
-                  </div>
-                </form>
+                    </form>
 
-                <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
-                  <div className="w-[100%] flex justify-between items-center mb-5">
-                    <div className="text-[1rem] lg:text-[25px] font-bold">
-                      Professional Exprience
+                    <div className="basicProfileCont m-[10px] lg:m-[30px] p-[20px] lg:p-[40px] shadow-lg">
+                      <div className="w-[100%] flex justify-between items-center mb-5">
+                        <div className="text-[1rem] lg:text-[25px] font-bold">
+                          Professional Exprience
+                        </div>
+                        {edits.prof ? (
+                          <div
+                            className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
+                            onClick={handleprof}
+                          >
+                            Save&nbsp;&nbsp;
+                            <i className="text-[15px] pi pi-check"></i>
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => {
+                              editform("prof");
+                            }}
+                            className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
+                          >
+                            Edit&nbsp;&nbsp;
+                            <i className="text-[15px] pi pi-pen-to-square"></i>
+                          </div>
+                        )}
+                      </div>
+                      <div className="w-[100%] flex flex-col justify-center items-center">
+                        <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
+                          <div className="w-[100%] lg:w-[48%]">
+                            <TextInput
+                              label="Year of Exprience"
+                              name="yearexprience"
+                              id="yearexprience"
+                              type="number"
+                              onChange={(e) => {
+                                setEmployeeData({
+                                  ...employeeData,
+                                  refExperence: e.target.value,
+                                });
+                              }}
+                              value={employeeData.refExperence}
+                              readonly={!edits.prof}
+                            />
+                          </div>
+                          <div className="w-[100%] lg:w-[48%]">
+                            <TextInput
+                              label="Specialization"
+                              name="specialization"
+                              id="specialization"
+                              type="text"
+                              onChange={(e) => {
+                                setEmployeeData({
+                                  ...employeeData,
+                                  refSpecialization: e.target.value,
+                                });
+                              }}
+                              value={employeeData.refSpecialization}
+                              readonly={!edits.prof}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {edits.prof ? (
-                      <div
-                        className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
-                        onClick={handleprof}
-                      >
-                        Save&nbsp;&nbsp;
-                        <i className="text-[15px] pi pi-check"></i>
-                      </div>
-                    ) : (
-                      <div
-                        onClick={() => {
-                          editform("prof");
-                        }}
-                        className="text-[15px] py-2 px-3 bg-[#f95005] font-bold cursor-pointer text-[#fff] rounded"
-                      >
-                        Edit&nbsp;&nbsp;
-                        <i className="text-[15px] pi pi-pen-to-square"></i>
-                      </div>
-                    )}
-                  </div>
-                  <div className="w-[100%] flex flex-col justify-center items-center">
-                    <div className="w-[100%] flex flex-col lg:flex-row gap-y-[20px] justify-between mb-[20px]">
-                      <div className="w-[100%] lg:w-[48%]">
-                        <TextInput
-                          label="Year of Exprience"
-                          name="yearexprience"
-                          id="yearexprience"
-                          type="number"
-                          onChange={(e) => {
-                            setEmployeeData({
-                              ...employeeData,
-                              refExperence: e.target.value,
-                            });
-                          }}
-                          value={employeeData.refExperence}
-                          readonly={!edits.prof}
-                        />
-                      </div>
-                      <div className="w-[100%] lg:w-[48%]">
-                        <TextInput
-                          label="Specialization"
-                          name="specialization"
-                          id="specialization"
-                          type="text"
-                          onChange={(e) => {
-                            setEmployeeData({
-                              ...employeeData,
-                              refSpecialization: e.target.value,
-                            });
-                          }}
-                          value={employeeData.refSpecialization}
-                          readonly={!edits.prof}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </>
             )}
 

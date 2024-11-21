@@ -208,9 +208,7 @@ const UserProfileEdit: React.FC<UserProfileEditProps> = ({ refid }) => {
       // Step 2: Update the mapped conditions to set `checked` to 1 if value matches
       const updatedConditions = healthConditions.map((condition) => {
         // Check if the condition value is in `presenthealth.refPresentHealth`
-        if (
-          data.data.presentHealth.refPresentHealth.includes(condition.value)
-        ) {
+        if (data.data.presentHealth.refPresentHealth) {
           return {
             ...condition,
             checked: 1, // Set `checked` to 1 if value matches
